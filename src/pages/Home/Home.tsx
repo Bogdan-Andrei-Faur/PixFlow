@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "./Home.module.css";
 
 const MAX_SIZE_MB = 5;
 const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
@@ -7,11 +8,12 @@ const Home = () => {
   const [imageFile, setImageFile] = React.useState<File | null>(null);
   const [previewURL, setPreviewURL] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
+  const [isDragActive, setIsDragActive] = React.useState(false);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
+  console.log(imageFile);
 
-    // Si no hay archivo (por ejemplo, el usuario cancela el diálogo)
+  const validateAndSetFile = (file: File | null) => {
+    // Si no hay archivo
     if (!file) {
       setImageFile(null);
       setPreviewURL(null);
@@ -40,6 +42,46 @@ const Home = () => {
     setImageFile(file);
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    validateAndSetFile(file);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragActive(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragActive(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragActive(false);
+
+    const file = e.dataTransfer.files?.[0] || null;
+    validateAndSetFile(file);
+  };
+
+  const handleCancel = () => {
+    if (previewURL) {
+      URL.revokeObjectURL(previewURL);
+    }
+    setImageFile(null);
+    setPreviewURL(null);
+    setError(null);
+  };
+
+  const handleEdit = () => {
+    // TODO: Navegar al editor de imagen
+    console.log("Editar imagen", imageFile);
+  };
+
   // 4) Limpiar URL cuando el componente se desmonte o cambie la imagen
   React.useEffect(() => {
     return () => {
@@ -50,13 +92,76 @@ const Home = () => {
   }, [previewURL]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1 className="text-4xl font-bold">PixFlow</h1>
+    <div className={`${styles.container} ${styles.background}`}>
+      <div className={styles.content}>
+        <h1 className={styles.title}>PixFlow</h1>
 
-      <input type="file" accept="image/*" onChange={handleFileChange} />
-      {error && <p>{error}</p>}
+        {previewURL && !error ? (
+          <>
+            <div className={styles.previewContainer}>
+              <img
+                className={styles.imagePreview}
+                src={previewURL}
+                alt="Preview"
+              />
+            </div>
+            <div className={styles.buttonContainer}>
+              <button
+                className={`${styles.button} ${styles.cancelButton}`}
+                onClick={handleCancel}
+              >
+                Cancelar
+              </button>
+              <button
+                className={`${styles.button} ${styles.editButton}`}
+                onClick={handleEdit}
+              >
+                Editar
+              </button>
+            </div>
+          </>
+        ) : (
+          <div
+            className={`${styles.dropZone} ${
+              isDragActive ? styles.dragActive : ""
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <input
+              className={styles.fileInput}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+            <div className={styles.dropZoneContent}>
+              <div className={styles.uploadIcon}>📁</div>
+              <p className={styles.dropZoneText}>Arrastra una imagen aquí</p>
+              <p className={styles.dropZoneSubtext}>
+                o haz clic para seleccionar (máx. {MAX_SIZE_MB}MB)
+              </p>
+            </div>
+          </div>
+        )}
 
-      {previewURL && !error && <img src={previewURL} alt="Preview" />}
+        {error && (
+          <div className={styles.alert}>
+            <div className={styles.alertIcon}>⚠️</div>
+            <div className={styles.alertContent}>
+              <p className={styles.alertTitle}>Error</p>
+              <p className={styles.alertMessage}>{error}</p>
+            </div>
+            <button
+              className={styles.alertClose}
+              onClick={() => setError(null)}
+              aria-label="Cerrar alerta"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

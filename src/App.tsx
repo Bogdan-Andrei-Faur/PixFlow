@@ -13,9 +13,9 @@ const DevelopmentBanner = ({ visible }: { visible: boolean }) =>
 
 const App = () => {
   return (
-    <div className="flex flex-col">
+    <div>
       <Router>
-        <DevelopmentBanner visible={true} />
+        <DevelopmentBanner visible={false} />
         <Routes>
           <Route path="/" element={<Home />} />
         </Routes>
