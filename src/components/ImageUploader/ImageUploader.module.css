@@ -1,0 +1,68 @@
+.dropZone {
+  width: 500px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  border: 3px dashed rgba(0, 0, 0, 0.3);
+  background-color: rgb(255, 255, 255, 0.8);
+  padding: 1.5rem;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  transition: all 0.5s ease-in-out;
+  margin-bottom: 1rem;
+  color: rgb(0, 0, 0, 0.6);
+  cursor: pointer;
+  position: relative;
+}
+
+.dropZone:hover {
+  border-color: rgba(0, 0, 0, 0.5);
+  background-color: rgb(255, 255, 255, 0.9);
+}
+
+.dropZone.dragActive {
+  border-color: #4f46e5;
+  background-color: rgba(79, 70, 229, 0.1);
+  color: #4f46e5;
+}
+
+/* Clase vacía exportada por CSS Modules para poder togglearla desde React */
+.dragActive {
+  opacity: 1;
+}
+
+.fileInput {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.dropZoneContent {
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.uploadIcon {
+  font-size: 3rem;
+  opacity: 0.5;
+}
+
+.dropZoneText {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.dropZoneSubtext {
+  font-size: 0.875rem;
+  opacity: 0.7;
+  margin: 0;
+}

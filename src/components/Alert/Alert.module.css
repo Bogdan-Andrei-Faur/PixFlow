@@ -1,0 +1,90 @@
+.alert {
+  position: fixed;
+  top: 5rem;
+  right: 2rem;
+  min-width: 300px;
+  max-width: 400px;
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-left: 4px solid #ff4d4f;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  animation: slideIn 0.3s ease-out;
+  z-index: 100;
+}
+
+.alert.closing {
+  animation: slideOut 0.3s ease-out forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+}
+
+.alertIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.alertContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.alertTitle {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #ff4d4f;
+  margin: 0;
+}
+
+.alertMessage {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.7);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.alertClose {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+
+.alertClose:hover {
+  color: rgba(0, 0, 0, 0.7);
+}
