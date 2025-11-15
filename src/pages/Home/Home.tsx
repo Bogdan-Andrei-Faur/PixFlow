@@ -9,8 +9,15 @@ const Home = () => {
   const [previewURL, setPreviewURL] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [isDragActive, setIsDragActive] = React.useState(false);
+  const [isAlertClosing, setIsAlertClosing] = React.useState(false);
 
-  console.log(imageFile);
+  const closeAlert = () => {
+    setIsAlertClosing(true);
+    setTimeout(() => {
+      setError(null);
+      setIsAlertClosing(false);
+    }, 300); // Duración de la animación
+  };
 
   const validateAndSetFile = (file: File | null) => {
     // Si no hay archivo
@@ -91,6 +98,17 @@ const Home = () => {
     };
   }, [previewURL]);
 
+  // 5) Auto-cerrar alerta de error después de 5 segundos
+  React.useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        closeAlert();
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
   return (
     <div className={`${styles.container} ${styles.background}`}>
       <div className={styles.content}>
@@ -146,7 +164,11 @@ const Home = () => {
         )}
 
         {error && (
-          <div className={styles.alert}>
+          <div
+            className={`${styles.alert} ${
+              isAlertClosing ? styles.closing : ""
+            }`}
+          >
             <div className={styles.alertIcon}>⚠️</div>
             <div className={styles.alertContent}>
               <p className={styles.alertTitle}>Error</p>
@@ -154,7 +176,7 @@ const Home = () => {
             </div>
             <button
               className={styles.alertClose}
-              onClick={() => setError(null)}
+              onClick={closeAlert}
               aria-label="Cerrar alerta"
             >
               ✕
