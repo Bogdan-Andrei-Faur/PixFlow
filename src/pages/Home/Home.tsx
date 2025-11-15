@@ -3,14 +3,18 @@ import styles from "./Home.module.css";
 import Alert from "../../components/Alert/Alert";
 import ImageUploader from "../../components/ImageUploader/ImageUploader";
 import ImagePreview from "../../components/ImagePreview/ImagePreview";
+import { useImageEditor } from "../../context/useImageEditor";
+import { useNavigate } from "react-router-dom";
 
-const MAX_SIZE_MB = 5;
+const MAX_SIZE_MB = 50;
 
 const Home = () => {
   const [imageFile, setImageFile] = React.useState<File | null>(null);
   const [previewURL, setPreviewURL] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const errorResetTimer = React.useRef<number | null>(null);
+  const { setSourceFile } = useImageEditor();
+  const navigate = useNavigate();
 
   const handleImageSelect = (file: File) => {
     if (previewURL) {
@@ -45,8 +49,10 @@ const Home = () => {
   };
 
   const handleEdit = () => {
-    // TODO: Navegar al editor de imagen
-    console.log("Editar imagen", imageFile);
+    if (imageFile) {
+      setSourceFile(imageFile); // Llevar archivo al contexto
+      navigate("/editor");
+    }
   };
 
   // Limpiar URL cuando el componente se desmonte o cambie la imagen
