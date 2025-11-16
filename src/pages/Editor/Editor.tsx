@@ -2,30 +2,19 @@ import React from "react";
 import styles from "./Editor.module.css";
 import { useImageEditor } from "../../context/useImageEditor";
 import { useNavigate } from "react-router-dom";
-import {
-  IconMoon,
-  IconSun,
-  IconLogout,
-  IconPlus,
-  IconMinus,
-  IconAspectRatio,
-  IconRestore,
-  IconObjectScan,
-  IconEdit,
-} from "@tabler/icons-react";
-
-const clamp = (v: number, min: number, max: number) =>
-  Math.min(Math.max(v, min), max);
+import ReactCrop, { type Crop, type PixelCrop } from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
+import cropStyles from "./components/ReactCropContainer.module.css";
+import ZoomControls from "./components/ZoomControls";
+import TopBar from "./components/TopBar";
+import ToolsPanel from "./components/ToolsPanel";
+import { clamp } from "./utils/number";
+import { useZoomPan } from "./hooks/useZoomPan";
 
 const Editor: React.FC = () => {
-  const { objectURL, file, clear } = useImageEditor();
+  const { objectURL, file, clear, setSourceFile } = useImageEditor();
   const navigate = useNavigate();
-  const [zoom, setZoom] = React.useState(1);
   const [isDragging, setIsDragging] = React.useState(false);
-  const [offset, setOffset] = React.useState<{ x: number; y: number }>({
-    x: 0,
-    y: 0,
-  });
   const dragStart = React.useRef<{
     x: number;
     y: number;
@@ -39,6 +28,36 @@ const Editor: React.FC = () => {
   );
   const [theme, setTheme] = React.useState<"dark" | "light">("dark");
 
+  // Zoom y Pan centralizados en un hook
+  const {
+    zoom,
+    setZoom,
+    offset,
+    setOffset,
+    handleWheel,
+    fitToScreen,
+    setOneToOne,
+  } = useZoomPan(natural, viewportRef);
+
+  // Estado para react-image-crop
+  const [crop, setCrop] = React.useState<Crop>();
+  const [completedCrop, setCompletedCrop] = React.useState<PixelCrop>();
+  const [completedPercentCrop, setCompletedPercentCrop] =
+    React.useState<Crop>();
+
+  // Estado para herramientas de edición
+  const [activeTool, setActiveTool] = React.useState<
+    "none" | "crop" | "resize" | "format"
+  >("none");
+  const [newWidth, setNewWidth] = React.useState<number>(0);
+  const [newHeight, setNewHeight] = React.useState<number>(0);
+  const [maintainAspect, setMaintainAspect] = React.useState(true);
+  const [targetFormat, setTargetFormat] = React.useState<
+    "png" | "jpeg" | "webp"
+  >("png");
+  const [jpegQuality, setJpegQuality] = React.useState(0.92);
+  const [cropApplied, setCropApplied] = React.useState(false);
+
   // Si no hay imagen, mostrar estado vacío
   React.useEffect(() => {
     if (!objectURL) {
@@ -46,18 +65,12 @@ const Editor: React.FC = () => {
     }
   }, [objectURL]);
 
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    if (e.ctrlKey) {
-      const factor = 1 - e.deltaY * 0.0015;
-      setZoom((z) => clamp(parseFloat((z * factor).toFixed(3)), 0.1, 8));
-    } else {
-      setOffset((o) => ({ x: o.x + e.deltaX, y: o.y + e.deltaY }));
-    }
-  };
-
   const startDrag = (e: React.PointerEvent) => {
-    if (!objectURL) return;
+    if (!objectURL || !imgRef.current || !viewportRef.current) return;
+    // En modo crop, react-easy-crop maneja los eventos
+    if (activeTool === "crop") return;
+
+    // Modo pan normal
     setIsDragging(true);
     dragStart.current = {
       x: e.clientX,
@@ -67,12 +80,22 @@ const Editor: React.FC = () => {
     };
   };
   const onDrag = (e: React.PointerEvent) => {
+    if (!imgRef.current || !viewportRef.current) return;
+    // En modo crop, react-easy-crop maneja los eventos
+    if (activeTool === "crop") return;
+
+    // Pan normal
     if (!isDragging || !dragStart.current) return;
     const dx = e.clientX - dragStart.current.x;
     const dy = e.clientY - dragStart.current.y;
     setOffset({ x: dragStart.current.ox + dx, y: dragStart.current.oy + dy });
   };
+
   const endDrag = () => {
+    // En modo crop, react-easy-crop maneja los eventos
+    if (activeTool === "crop") return;
+
+    // Pan normal
     setIsDragging(false);
     dragStart.current = null;
   };
@@ -82,18 +105,74 @@ const Editor: React.FC = () => {
     setOffset({ x: 0, y: 0 });
   };
 
-  const fitToScreen = React.useCallback(() => {
-    if (!natural || !viewportRef.current) return;
-    const vw = viewportRef.current.clientWidth;
-    const vh = viewportRef.current.clientHeight;
-    const scale = Math.min(vw / natural.w, vh / natural.h) * 0.98;
-    setZoom(clamp(scale, 0.1, 8));
-    setOffset({ x: 0, y: 0 });
-  }, [natural]);
+  // fitToScreen y setOneToOne vienen del hook
 
-  const setOneToOne = () => {
-    setZoom(1);
-    setOffset({ x: 0, y: 0 });
+  const applyCrop = () => {
+    if (!completedPercentCrop || !natural || !imgRef.current) return;
+
+    // Convertir porcentajes a píxeles de la imagen natural
+    const cropX = (completedPercentCrop.x / 100) * natural.w;
+    const cropY = (completedPercentCrop.y / 100) * natural.h;
+    const cropWidth = (completedPercentCrop.width / 100) * natural.w;
+    const cropHeight = (completedPercentCrop.height / 100) * natural.h;
+
+    console.log("percentCrop:", completedPercentCrop);
+    console.log("Converted to pixels:", {
+      cropX,
+      cropY,
+      cropWidth,
+      cropHeight,
+    });
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    canvas.width = Math.round(cropWidth);
+    canvas.height = Math.round(cropHeight);
+
+    // Dibujar la porción recortada con coordenadas absolutas
+    ctx.drawImage(
+      imgRef.current,
+      cropX,
+      cropY,
+      cropWidth,
+      cropHeight,
+      0,
+      0,
+      cropWidth,
+      cropHeight
+    );
+
+    // Convertir a blob y crear nueva URL
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+
+      // Revocar la URL anterior si existe
+      if (objectURL && cropApplied) {
+        URL.revokeObjectURL(objectURL);
+      }
+
+      const newFile = new File([blob], file?.name || "cropped.png", {
+        type: "image/png",
+      });
+
+      // Actualizar el contexto con la nueva imagen
+      setSourceFile(newFile);
+
+      // Actualizar dimensiones naturales
+      setNatural({ w: canvas.width, h: canvas.height });
+
+      // Limpiar el crop y marcar como aplicado
+      setCrop(undefined);
+      setCompletedCrop(undefined);
+      setCompletedPercentCrop(undefined);
+      setCropApplied(true);
+      setActiveTool("none");
+
+      // Reset zoom y offset
+      requestAnimationFrame(() => fitToScreen());
+    });
   };
 
   React.useEffect(() => {
@@ -112,121 +191,248 @@ const Editor: React.FC = () => {
     window.addEventListener("keydown", onKeyDown, { capture: true });
     return () =>
       window.removeEventListener("keydown", onKeyDown, { capture: true });
-  }, [fitToScreen]);
+  }, [fitToScreen, setZoom]);
 
   const exitEditor = () => {
     clear();
     navigate("/");
   };
 
+  const handleExport = async () => {
+    if (!imgRef.current || !natural) return;
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Si hay recorte activo, usar esas coordenadas
+    let sourceX = 0;
+    let sourceY = 0;
+    let sourceWidth = natural.w;
+    let sourceHeight = natural.h;
+
+    if (completedCrop) {
+      sourceX = Math.max(0, Math.min(completedCrop.x, natural.w));
+      sourceY = Math.max(0, Math.min(completedCrop.y, natural.h));
+      sourceWidth = Math.min(completedCrop.width, natural.w - sourceX);
+      sourceHeight = Math.min(completedCrop.height, natural.h - sourceY);
+    }
+
+    // Determinar dimensiones finales
+    const finalWidth =
+      activeTool === "resize" && newWidth > 0
+        ? newWidth
+        : Math.round(sourceWidth);
+    const finalHeight =
+      activeTool === "resize" && newHeight > 0
+        ? newHeight
+        : Math.round(sourceHeight);
+
+    canvas.width = finalWidth;
+    canvas.height = finalHeight;
+
+    // Dibujar imagen recortada y/o redimensionada
+    ctx.drawImage(
+      imgRef.current,
+      sourceX,
+      sourceY,
+      sourceWidth,
+      sourceHeight,
+      0,
+      0,
+      finalWidth,
+      finalHeight
+    );
+
+    // Exportar con el formato seleccionado
+    const mimeType =
+      targetFormat === "jpeg"
+        ? "image/jpeg"
+        : targetFormat === "webp"
+        ? "image/webp"
+        : "image/png";
+    const quality = targetFormat === "jpeg" ? jpegQuality : 0.92;
+
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        const ext = targetFormat === "jpeg" ? "jpg" : targetFormat;
+        a.download = `${file?.name.split(".")[0] || "imagen"}.${ext}`;
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+      mimeType,
+      quality
+    );
+  };
+
   return (
     <div className={styles.editorRoot}>
-      <div className={styles.topBar}>
-        <h1 className={styles.title}>
-          Editor PixFlow <IconEdit size={24} />
-        </h1>
-        <span className={styles.metaInfo}>
-          {file
-            ? `${file.name} • ${(file.size / 1024).toFixed(1)} KB`
-            : "Sin imagen"}
-        </span>
-        <div className={styles.spacer} />
-        <button
-          className={`${styles.button} ${styles.iconButton}`}
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          aria-label="Cambiar tema"
+      <TopBar
+        fileName={file?.name}
+        fileSizeKB={file ? (file.size / 1024).toFixed(1) : undefined}
+        theme={theme}
+        onToggleTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
+        onReset={resetView}
+        onExit={exitEditor}
+      />
+
+      <div className={styles.mainContent}>
+        {/* Panel lateral de herramientas */}
+        <ToolsPanel
+          activeTool={activeTool}
+          onSetActiveTool={(t) => {
+            if (t === "none" && activeTool === "crop") {
+              setCrop(undefined);
+              setCompletedCrop(undefined);
+              setCompletedPercentCrop(undefined);
+            }
+            if (t === "resize" && activeTool !== "resize" && natural) {
+              setNewWidth(natural.w);
+              setNewHeight(natural.h);
+            }
+            setActiveTool(t);
+          }}
+          cropRect={
+            completedCrop
+              ? {
+                  x: completedCrop.x,
+                  y: completedCrop.y,
+                  width: completedCrop.width,
+                  height: completedCrop.height,
+                }
+              : null
+          }
+          natural={natural}
+          onInitCropIfNeeded={() => {
+            // react-image-crop no necesita inicialización
+          }}
+          onApplyCrop={applyCrop}
+          onCancelCrop={() => {
+            setCrop(undefined);
+            setCompletedCrop(undefined);
+            setCompletedPercentCrop(undefined);
+            setActiveTool("none");
+            setCropApplied(false);
+          }}
+          newWidth={newWidth}
+          newHeight={newHeight}
+          maintainAspect={maintainAspect}
+          onChangeWidth={(w) => {
+            setNewWidth(w);
+            if (maintainAspect && natural)
+              setNewHeight(Math.round((w * natural.h) / natural.w));
+          }}
+          onChangeHeight={(h) => {
+            setNewHeight(h);
+            if (maintainAspect && natural)
+              setNewWidth(Math.round((h * natural.w) / natural.h));
+          }}
+          onToggleAspect={setMaintainAspect}
+          targetFormat={targetFormat}
+          jpegQuality={jpegQuality}
+          onChangeFormat={setTargetFormat}
+          onChangeQuality={setJpegQuality}
+          onExport={handleExport}
+        />
+
+        {/* Área del canvas */}
+        <div
+          className={`${styles.canvasWrapper} ${
+            theme === "dark"
+              ? styles.checkerboardDark
+              : styles.checkerboardLight
+          }`}
         >
-          {theme === "dark" ? <IconMoon size={16} /> : <IconSun size={16} />}
-        </button>
-        <button className={styles.button} onClick={resetView}>
-          Reset <IconRestore size={16} />
-        </button>
-        <button
-          className={`${styles.button} ${styles.primary}`}
-          onClick={exitEditor}
-        >
-          Salir <IconLogout size={16} />
-        </button>
-      </div>
-      <div
-        className={`${styles.canvasWrapper} ${
-          theme === "dark" ? styles.checkerboardDark : styles.checkerboardLight
-        }`}
-      >
-        {!objectURL && (
-          <div className={styles.emptyState}>
-            No hay imagen cargada. Vuelve y selecciona una.
-          </div>
-        )}
-        {objectURL && (
-          <div
-            className={`${styles.viewport} ${
-              isDragging ? styles.dragging : ""
-            }`}
-            ref={viewportRef}
-            onPointerDown={startDrag}
-            onPointerMove={onDrag}
-            onPointerUp={endDrag}
-            onPointerLeave={endDrag}
-            onWheel={handleWheel}
-          >
-            <img
-              ref={imgRef}
-              src={objectURL}
-              alt={file?.name || "Imagen"}
-              className={styles.imageLayer}
-              draggable={false}
-              onLoad={(e) => {
-                const t = e.currentTarget;
-                setNatural({ w: t.naturalWidth, h: t.naturalHeight });
-                requestAnimationFrame(() => fitToScreen());
-              }}
-              style={{
-                transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,
-              }}
-            />
-            <div className={styles.zoomControls}>
-              <button
-                className={`${styles.button} ${styles.iconButton}`}
-                onClick={() =>
+          {!objectURL && (
+            <div className={styles.emptyState}>
+              No hay imagen cargada. Vuelve y selecciona una.
+            </div>
+          )}
+          {objectURL && (
+            <div
+              className={`${styles.viewport} ${
+                isDragging ? styles.dragging : ""
+              }`}
+              ref={viewportRef}
+              onPointerDown={startDrag}
+              onPointerMove={onDrag}
+              onPointerUp={endDrag}
+              onPointerLeave={endDrag}
+              onWheel={handleWheel}
+            >
+              <img
+                ref={imgRef}
+                src={objectURL}
+                alt={file?.name || "Imagen"}
+                className={styles.imageLayer}
+                draggable={false}
+                onLoad={(e) => {
+                  const t = e.currentTarget;
+                  setNatural({ w: t.naturalWidth, h: t.naturalHeight });
+                  requestAnimationFrame(() => fitToScreen());
+                }}
+                style={{
+                  transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,
+                  display: activeTool === "crop" ? "none" : "block",
+                }}
+              />
+
+              {/* React Image Crop - renderiza dentro del viewport con zoom */}
+              {activeTool === "crop" && objectURL && (
+                <div
+                  className={cropStyles.cropContainer}
+                  style={{
+                    transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,
+                    // @ts-expect-error - CSS custom property
+                    "--inverse-zoom": 1 / zoom,
+                  }}
+                >
+                  <ReactCrop
+                    crop={crop}
+                    onChange={(_pixelCrop, percentCrop) => setCrop(percentCrop)}
+                    onComplete={(pixelCrop, percentCrop) => {
+                      setCompletedCrop(pixelCrop);
+                      setCompletedPercentCrop(percentCrop);
+                    }}
+                    ruleOfThirds
+                  >
+                    <img
+                      src={objectURL}
+                      alt="Crop"
+                      style={{
+                        maxWidth: "none",
+                        display: "block",
+                      }}
+                      width={natural?.w}
+                      height={natural?.h}
+                    />
+                  </ReactCrop>
+                </div>
+              )}
+
+              <ZoomControls
+                zoom={zoom}
+                onZoomOut={() =>
                   setZoom((z) =>
                     clamp(parseFloat((z / 1.1).toFixed(3)), 0.1, 4)
                   )
                 }
-                aria-label="Reducir zoom"
-              >
-                <IconMinus size={16} />
-              </button>
-              <span>{Math.round(zoom * 100)}%</span>
-              <input
-                className={styles.range}
-                type="range"
-                min={0.1}
-                max={4}
-                step={0.01}
-                value={zoom}
-                onChange={(e) => setZoom(parseFloat(e.target.value))}
-              />
-              <button
-                className={`${styles.button} ${styles.iconButton}`}
-                onClick={() =>
+                onSlider={(v) => setZoom(v)}
+                onZoomIn={() =>
                   setZoom((z) =>
                     clamp(parseFloat((z * 1.1).toFixed(3)), 0.1, 4)
                   )
                 }
-                aria-label="Aumentar zoom"
-              >
-                <IconPlus size={16} />
-              </button>
-              <button className={styles.button} onClick={fitToScreen}>
-                Encajar <IconObjectScan size={16} />
-              </button>
-              <button className={styles.button} onClick={setOneToOne}>
-                1:1 <IconAspectRatio size={16} />
-              </button>
+                onFit={fitToScreen}
+                onOneToOne={setOneToOne}
+              />
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

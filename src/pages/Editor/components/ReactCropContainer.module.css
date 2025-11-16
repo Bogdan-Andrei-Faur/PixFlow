@@ -1,0 +1,40 @@
+.cropContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center center;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+/* Asegurar que ReactCrop y sus elementos sean interactivos */
+:global(.ReactCrop) {
+  pointer-events: auto !important;
+}
+
+:global(.ReactCrop__crop-selection) {
+  pointer-events: auto !important;
+}
+
+:global(.ReactCrop__drag-handle) {
+  pointer-events: auto !important;
+}
+
+/* Mejorar visibilidad de handles - usar tamaño fijo que se compensa con el zoom */
+:global(.ReactCrop__drag-handle) {
+  width: calc(18px * var(--inverse-zoom, 1)) !important;
+  height: calc(18px * var(--inverse-zoom, 1)) !important;
+  background-color: white !important;
+  border: calc(3px * var(--inverse-zoom, 1)) solid #4f46e5 !important;
+  border-radius: calc(3px * var(--inverse-zoom, 1)) !important;
+}
+
+:global(.ReactCrop__drag-handle::after) {
+  display: none !important;
+}
+
+/* Bordes más visibles - compensar grosor con zoom */
+:global(.ReactCrop__crop-selection) {
+  border: calc(3px * var(--inverse-zoom, 1)) solid #4f46e5 !important;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5) !important;
+}
