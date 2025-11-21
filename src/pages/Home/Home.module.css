@@ -12,13 +12,15 @@
 .background {
   position: relative;
   min-height: 100dvh;
-  background: radial-gradient(
-    ellipse at 30% 70%,
-    #ffe680,
-    #ffd4e5 25%,
-    #c5d5ea 50%,
-    #b8ecf3 75%,
-    #e8f4f8
+  background: linear-gradient(
+    135deg,
+    #121212 25%,
+    #1a1a1a 25%,
+    #1a1a1a 50%,
+    #121212 50%,
+    #121212 75%,
+    #1a1a1a 75%,
+    #1a1a1a
   );
   background-size: 200% 200%;
   animation: bgShift 12s ease-in-out infinite;
@@ -48,5 +50,5 @@
   line-height: 2.5rem;
   font-weight: 700;
   margin-bottom: 3rem;
-  color: rgb(0, 0, 0, 0.8);
+  color: rgba(255, 255, 255, 0.8);
 }

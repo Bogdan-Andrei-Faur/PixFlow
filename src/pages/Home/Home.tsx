@@ -1,8 +1,8 @@
 import React from "react";
 import styles from "./Home.module.css";
 import Alert from "../../components/Alert/Alert";
-import ImageUploader from "../../components/ImageUploader/ImageUploader";
-import ImagePreview from "../../components/ImagePreview/ImagePreview";
+import ImageUploader from "./components/ImageUploader";
+import ImagePreview from "./components/ImagePreview";
 import { useImageEditor } from "../../context/useImageEditor";
 import { useNavigate } from "react-router-dom";
 

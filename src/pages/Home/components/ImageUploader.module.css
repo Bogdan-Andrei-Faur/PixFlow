@@ -6,21 +6,21 @@
   align-items: center;
   justify-content: center;
   border-radius: 0.75rem;
-  border: 3px dashed rgba(0, 0, 0, 0.3);
-  background-color: rgb(255, 255, 255, 0.8);
+  border: 3px dashed rgba(255, 255, 255, 0.3);
+  background-color: rgba(56, 56, 56, 0.8);
   padding: 1.5rem;
   text-align: center;
   backdrop-filter: blur(12px);
   transition: all 0.5s ease-in-out;
   margin-bottom: 1rem;
-  color: rgb(0, 0, 0, 0.6);
+  color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
   position: relative;
 }
 
 .dropZone:hover {
-  border-color: rgba(0, 0, 0, 0.5);
-  background-color: rgb(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(56, 56, 56, 0.9);
 }
 
 .dropZone.dragActive {
