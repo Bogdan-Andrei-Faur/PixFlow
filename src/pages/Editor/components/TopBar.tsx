@@ -13,7 +13,7 @@ import {
 
 interface Props {
   fileName?: string;
-  fileSizeKB?: string;
+  fileSize?: number;
   theme: "dark" | "light";
   onToggleTheme: () => void;
   onReset: () => void;
@@ -27,7 +27,7 @@ interface Props {
 
 const TopBar: React.FC<Props> = ({
   fileName,
-  fileSizeKB,
+  fileSize,
   theme,
   onToggleTheme,
   onReset,
@@ -38,13 +38,21 @@ const TopBar: React.FC<Props> = ({
   canRedo = false,
   onLoadNewImage,
 }) => {
+  const formatBytes = (bytes: number) => {
+    if (bytes === 0) return "0 B";
+    const k = 1024;
+    const sizes = ["B", "KB", "MB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
+  };
+
   return (
     <div className={styles.topBar}>
       <h1 className={styles.title}>
         Editor PixFlow <IconEdit size={24} />
       </h1>
       <span className={styles.metaInfo}>
-        {fileName ? `${fileName} • ${fileSizeKB} KB` : "Sin imagen"}
+        {fileName ? `${fileName} • ${formatBytes(fileSize || 0)}` : "Sin imagen"}
       </span>
       <div className={styles.spacer} />
 

@@ -184,7 +184,7 @@ const Editor: React.FC = () => {
       />
       <TopBar
         fileName={file?.name}
-        fileSizeKB={file ? (file.size / 1024).toFixed(1) : undefined}
+        fileSize={file?.size}
         theme={theme}
         onToggleTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
         onReset={resetAll}
