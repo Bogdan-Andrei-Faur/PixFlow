@@ -39,6 +39,8 @@ interface Props {
   onChangeWidth: (w: number) => void;
   onChangeHeight: (h: number) => void;
   onToggleAspect: (v: boolean) => void;
+  onApplyResize: () => void;
+  onCancelResize: () => void;
 
   // Format
   targetFormat: "png" | "jpeg" | "webp";
@@ -64,6 +66,8 @@ const ToolsPanel: React.FC<Props> = ({
   onChangeWidth,
   onChangeHeight,
   onToggleAspect,
+  onApplyResize,
+  onCancelResize,
   targetFormat,
   jpegQuality,
   onChangeFormat,
@@ -166,6 +170,20 @@ const ToolsPanel: React.FC<Props> = ({
             />
             Mantener aspecto
           </label>
+          <button
+            className={`${styles.button} ${styles.primary}`}
+            onClick={onApplyResize}
+            style={{ width: "100%", marginTop: "0.5rem" }}
+          >
+            Aplicar redimensionado
+          </button>
+          <button
+            className={styles.button}
+            onClick={onCancelResize}
+            style={{ width: "100%" }}
+          >
+            Cancelar
+          </button>
         </div>
       )}
 

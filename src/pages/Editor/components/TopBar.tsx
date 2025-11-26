@@ -47,7 +47,7 @@ const TopBar: React.FC<Props> = ({
         {fileName ? `${fileName} • ${fileSizeKB} KB` : "Sin imagen"}
       </span>
       <div className={styles.spacer} />
-      
+
       {/* Acciones de edición */}
       <button
         className={`${styles.button} ${styles.iconButton}`}
@@ -77,10 +77,17 @@ const TopBar: React.FC<Props> = ({
       <button className={styles.button} onClick={onReset}>
         <IconRestore size={16} /> Reset
       </button>
-      
+
       {/* Separador visual */}
-      <div style={{ width: "1px", height: "24px", background: "#444", margin: "0 0.5rem" }} />
-      
+      <div
+        style={{
+          width: "1px",
+          height: "24px",
+          background: "#444",
+          margin: "0 0.5rem",
+        }}
+      />
+
       {/* Utilidades */}
       <button
         className={`${styles.button} ${styles.iconButton}`}

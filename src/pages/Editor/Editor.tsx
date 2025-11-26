@@ -61,7 +61,14 @@ const Editor: React.FC = () => {
   });
 
   // Herramienta de redimensionado
-  const resizeTool = useResizeTool({ natural });
+  const resizeTool = useResizeTool({
+    natural,
+    imgRef,
+    setSourceFile,
+    setNatural,
+    fitToScreen,
+    onBeforeResize: () => history.saveSnapshot(),
+  });
 
   // Historial (undo/redo)
   const history = useEditorHistory({
@@ -212,6 +219,14 @@ const Editor: React.FC = () => {
           onChangeWidth={resizeTool.handleWidthChange}
           onChangeHeight={resizeTool.handleHeightChange}
           onToggleAspect={resizeTool.setMaintainAspect}
+          onApplyResize={() => {
+            resizeTool.applyResize();
+            setActiveTool("none");
+          }}
+          onCancelResize={() => {
+            resizeTool.cancelResize();
+            setActiveTool("none");
+          }}
           targetFormat={targetFormat}
           jpegQuality={jpegQuality}
           onChangeFormat={setTargetFormat}
