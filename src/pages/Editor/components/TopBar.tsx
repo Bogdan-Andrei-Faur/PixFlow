@@ -47,6 +47,8 @@ const TopBar: React.FC<Props> = ({
         {fileName ? `${fileName} • ${fileSizeKB} KB` : "Sin imagen"}
       </span>
       <div className={styles.spacer} />
+      
+      {/* Acciones de edición */}
       <button
         className={`${styles.button} ${styles.iconButton}`}
         onClick={onUndo}
@@ -63,13 +65,6 @@ const TopBar: React.FC<Props> = ({
       >
         <IconArrowForwardUp size={16} />
       </button>
-      <button
-        className={`${styles.button} ${styles.iconButton}`}
-        onClick={onToggleTheme}
-        aria-label="Cambiar tema"
-      >
-        {theme === "dark" ? <IconMoon size={16} /> : <IconSun size={16} />}
-      </button>
       {onLoadNewImage && (
         <button
           className={styles.button}
@@ -80,10 +75,22 @@ const TopBar: React.FC<Props> = ({
         </button>
       )}
       <button className={styles.button} onClick={onReset}>
-        Reset <IconRestore size={16} />
+        <IconRestore size={16} /> Reset
+      </button>
+      
+      {/* Separador visual */}
+      <div style={{ width: "1px", height: "24px", background: "#444", margin: "0 0.5rem" }} />
+      
+      {/* Utilidades */}
+      <button
+        className={`${styles.button} ${styles.iconButton}`}
+        onClick={onToggleTheme}
+        aria-label="Cambiar tema"
+      >
+        {theme === "dark" ? <IconMoon size={16} /> : <IconSun size={16} />}
       </button>
       <button className={`${styles.button} ${styles.primary}`} onClick={onExit}>
-        Salir <IconLogout size={16} />
+        <IconLogout size={16} /> Salir
       </button>
     </div>
   );
