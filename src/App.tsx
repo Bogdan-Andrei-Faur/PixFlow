@@ -3,6 +3,7 @@ import "./App.css";
 
 import Home from "./pages/Home/Home";
 import Editor from "./pages/Editor/Editor";
+import NotFound from "./pages/NotFound/NotFound";
 import { ImageEditorProvider } from "./context/ImageEditorContext";
 
 const DevelopmentBanner = ({ visible }: { visible: boolean }) =>
@@ -22,6 +23,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/editor" element={<Editor />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
       </ImageEditorProvider>
