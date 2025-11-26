@@ -1,13 +1,8 @@
 import React from "react";
 import styles from "../Editor.module.css";
-import {
-  IconCrop,
-  IconResize,
-  IconFileTypePng,
-  IconDownload,
-} from "@tabler/icons-react";
+import { IconCrop, IconResize, IconDownload } from "@tabler/icons-react";
 
-export type Tool = "none" | "crop" | "resize" | "format";
+export type Tool = "none" | "crop" | "resize";
 
 interface NaturalDims {
   w: number;
@@ -42,14 +37,8 @@ interface Props {
   onApplyResize: () => void;
   onCancelResize: () => void;
 
-  // Format
-  targetFormat: "png" | "jpeg" | "webp";
-  jpegQuality: number;
-  onChangeFormat: (fmt: "png" | "jpeg" | "webp") => void;
-  onChangeQuality: (q: number) => void;
-
   // Export
-  onExport: () => void;
+  onOpenExportModal: () => void;
 }
 
 const ToolsPanel: React.FC<Props> = ({
@@ -68,11 +57,7 @@ const ToolsPanel: React.FC<Props> = ({
   onToggleAspect,
   onApplyResize,
   onCancelResize,
-  targetFormat,
-  jpegQuality,
-  onChangeFormat,
-  onChangeQuality,
-  onExport,
+  onOpenExportModal,
 }) => {
   return (
     <div className={styles.toolsPanel}>
@@ -187,75 +172,12 @@ const ToolsPanel: React.FC<Props> = ({
         </div>
       )}
 
-      {/* Formato */}
-      <button
-        className={`${styles.toolButton} ${
-          activeTool === "format" ? styles.active : ""
-        }`}
-        onClick={() =>
-          onSetActiveTool(activeTool === "format" ? "none" : "format")
-        }
-      >
-        <IconFileTypePng size={20} />
-        <span>Formato</span>
-      </button>
-
-      {activeTool === "format" && (
-        <div className={styles.toolOptions}>
-          <label className={styles.radioLabel}>
-            <input
-              type="radio"
-              name="format"
-              value="png"
-              checked={targetFormat === "png"}
-              onChange={() => onChangeFormat("png")}
-            />
-            PNG
-          </label>
-          <label className={styles.radioLabel}>
-            <input
-              type="radio"
-              name="format"
-              value="jpeg"
-              checked={targetFormat === "jpeg"}
-              onChange={() => onChangeFormat("jpeg")}
-            />
-            JPEG
-          </label>
-          <label className={styles.radioLabel}>
-            <input
-              type="radio"
-              name="format"
-              value="webp"
-              checked={targetFormat === "webp"}
-              onChange={() => onChangeFormat("webp")}
-            />
-            WebP
-          </label>
-
-          {targetFormat === "jpeg" && (
-            <label className={styles.optionLabel}>
-              Calidad ({Math.round(jpegQuality * 100)}%):
-              <input
-                type="range"
-                min="0.1"
-                max="1"
-                step="0.01"
-                value={jpegQuality}
-                onChange={(e) => onChangeQuality(parseFloat(e.target.value))}
-                className={styles.qualitySlider}
-              />
-            </label>
-          )}
-        </div>
-      )}
-
       <div className={styles.spacer} />
 
       {/* Exportar */}
       <button
         className={`${styles.toolButton} ${styles.exportButton}`}
-        onClick={onExport}
+        onClick={onOpenExportModal}
       >
         <IconDownload size={20} />
         <span>Descargar</span>

@@ -8,6 +8,7 @@ import cropStyles from "./components/ReactCropContainer.module.css";
 import ZoomControls from "./components/ZoomControls";
 import TopBar from "./components/TopBar";
 import ToolsPanel from "./components/ToolsPanel";
+import ExportModal from "./components/ExportModal";
 import { clamp } from "./utils/number";
 import { useZoomPan } from "./hooks/useZoomPan";
 import { useEditorHistory } from "./hooks/useEditorHistory";
@@ -31,12 +32,9 @@ const Editor: React.FC = () => {
   );
   const [theme, setTheme] = React.useState<"dark" | "light">("dark");
   const [activeTool, setActiveTool] = React.useState<
-    "none" | "crop" | "resize" | "format"
+    "none" | "crop" | "resize"
   >("none");
-  const [targetFormat, setTargetFormat] = React.useState<
-    "png" | "jpeg" | "webp"
-  >("png");
-  const [jpegQuality, setJpegQuality] = React.useState(0.92);
+  const [isExportModalOpen, setIsExportModalOpen] = React.useState(false);
 
   // Zoom y Pan
   const {
@@ -102,8 +100,6 @@ const Editor: React.FC = () => {
     activeTool,
     newWidth: resizeTool.newWidth,
     newHeight: resizeTool.newHeight,
-    targetFormat,
-    jpegQuality,
   });
 
   // Atajos de teclado
@@ -139,7 +135,7 @@ const Editor: React.FC = () => {
     navigate("/");
   };
 
-  const handleToolChange = (t: "none" | "crop" | "resize" | "format") => {
+  const handleToolChange = (t: "none" | "crop" | "resize") => {
     if (t === "none" && activeTool === "crop") {
       cropTool.clearCrop();
     }
@@ -147,6 +143,14 @@ const Editor: React.FC = () => {
       resizeTool.initializeResize();
     }
     setActiveTool(t);
+  };
+
+  const handleExportWithFormat = (
+    format: "png" | "jpeg" | "webp",
+    quality: number,
+    fileName: string
+  ) => {
+    handleExport(format, quality, fileName);
   };
 
   const handleLoadNewImage = () => {
@@ -227,11 +231,7 @@ const Editor: React.FC = () => {
             resizeTool.cancelResize();
             setActiveTool("none");
           }}
-          targetFormat={targetFormat}
-          jpegQuality={jpegQuality}
-          onChangeFormat={setTargetFormat}
-          onChangeQuality={setJpegQuality}
-          onExport={handleExport}
+          onOpenExportModal={() => setIsExportModalOpen(true)}
         />
 
         <div
@@ -375,6 +375,16 @@ const Editor: React.FC = () => {
           )}
         </div>
       </div>
+
+      <ExportModal
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        onExport={handleExportWithFormat}
+        fileName={file?.name}
+        currentFileSize={file?.size}
+        imageRef={imgRef}
+        naturalDims={natural}
+      />
     </div>
   );
 };
