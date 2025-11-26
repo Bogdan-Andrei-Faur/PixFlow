@@ -1,0 +1,21 @@
+# Robots.txt para PixFlow
+# Permite el acceso completo a todos los bots de búsqueda
+
+User-agent: *
+Allow: /
+
+# Específico para bots de búsqueda principales
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Sitemap
+Sitemap: https://pixflow.andreifaur.dev/sitemap.xml
+
+# Crawl-delay (opcional, para evitar sobrecarga del servidor)
+# Crawl-delay: 1
