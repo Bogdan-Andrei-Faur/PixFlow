@@ -19,6 +19,7 @@ import { useImageExport } from "./hooks/useImageExport";
 import { useResizeTool } from "./hooks/useResizeTool";
 import { useTransformTool } from "./hooks/useTransformTool";
 import { useAdjustmentsTool } from "./hooks/useAdjustmentsTool";
+import { useQuickFilters } from "./hooks/useQuickFilters";
 import { IconUpload, IconHome } from "@tabler/icons-react";
 
 const Editor: React.FC = () => {
@@ -34,7 +35,7 @@ const Editor: React.FC = () => {
   );
   const [theme, setTheme] = React.useState<"dark" | "light">("dark");
   const [activeTool, setActiveTool] = React.useState<
-    "none" | "crop" | "resize" | "transform" | "adjustments"
+    "none" | "crop" | "resize" | "transform" | "adjustments" | "filters"
   >("none");
   const [isExportModalOpen, setIsExportModalOpen] = React.useState(false);
 
@@ -85,6 +86,14 @@ const Editor: React.FC = () => {
     setSourceFile,
     fitToScreen,
     onBeforeAdjust: () => history.saveSnapshot(),
+  });
+
+  // Herramienta de filtros rápidos (grises/sepia/invertir)
+  const quickFilters = useQuickFilters({
+    imgRef,
+    setSourceFile,
+    fitToScreen,
+    onBeforeApply: () => history.saveSnapshot(),
   });
 
   // Historial (undo/redo)
@@ -155,7 +164,7 @@ const Editor: React.FC = () => {
   };
 
   const handleToolChange = (
-    t: "none" | "crop" | "resize" | "transform" | "adjustments"
+    t: "none" | "crop" | "resize" | "transform" | "adjustments" | "filters"
   ) => {
     if (t === "none" && activeTool === "crop") {
       cropTool.clearCrop();
@@ -165,6 +174,9 @@ const Editor: React.FC = () => {
     }
     if (t === "none" && activeTool === "adjustments") {
       adjustmentsTool.cancelAdjustments();
+    }
+    if (t === "none" && activeTool === "filters") {
+      quickFilters.cancelFilter();
     }
     setActiveTool(t);
   };
@@ -275,6 +287,17 @@ const Editor: React.FC = () => {
             setActiveTool("none");
           }}
           hasAdjustmentChanges={adjustmentsTool.hasChanges}
+          activeFilter={quickFilters.activeFilter}
+          onSelectFilter={quickFilters.selectFilter}
+          onApplyFilter={() => {
+            quickFilters.applyFilter();
+            setActiveTool("none");
+          }}
+          onCancelFilter={() => {
+            quickFilters.cancelFilter();
+            setActiveTool("none");
+          }}
+          hasFilterChanges={quickFilters.hasChanges}
           onOpenExportModal={() => setIsExportModalOpen(true)}
         />
 
@@ -365,6 +388,8 @@ const Editor: React.FC = () => {
                   filter:
                     activeTool === "adjustments"
                       ? adjustmentsTool.previewFilter
+                      : activeTool === "filters"
+                      ? quickFilters.previewFilter
                       : "none",
                 }}
               />

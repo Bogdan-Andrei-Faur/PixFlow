@@ -9,9 +9,16 @@ import {
   IconFlipVertical,
   IconRotateClockwise,
   IconAdjustments,
+  IconFilter,
 } from "@tabler/icons-react";
 
-export type Tool = "none" | "crop" | "resize" | "transform" | "adjustments";
+export type Tool =
+  | "none"
+  | "crop"
+  | "resize"
+  | "transform"
+  | "adjustments"
+  | "filters";
 
 interface NaturalDims {
   w: number;
@@ -64,6 +71,13 @@ interface Props {
   onCancelAdjustments: () => void;
   hasAdjustmentChanges: boolean;
 
+  // Quick Filters
+  activeFilter: "none" | "grayscale" | "sepia" | "invert";
+  onSelectFilter: (filter: "none" | "grayscale" | "sepia" | "invert") => void;
+  onApplyFilter: () => void;
+  onCancelFilter: () => void;
+  hasFilterChanges: boolean;
+
   // Export
   onOpenExportModal: () => void;
 }
@@ -98,6 +112,11 @@ const ToolsPanel: React.FC<Props> = ({
   onApplyAdjustments,
   onCancelAdjustments,
   hasAdjustmentChanges,
+  activeFilter,
+  onSelectFilter,
+  onApplyFilter,
+  onCancelFilter,
+  hasFilterChanges,
   onOpenExportModal,
 }) => {
   return (
@@ -353,6 +372,70 @@ const ToolsPanel: React.FC<Props> = ({
               <button
                 className={styles.button}
                 onClick={onCancelAdjustments}
+                style={{ width: "100%" }}
+              >
+                Cancelar
+              </button>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Filtros rápidos */}
+      <button
+        className={`${styles.toolButton} ${
+          activeTool === "filters" ? styles.active : ""
+        }`}
+        onClick={() =>
+          onSetActiveTool(activeTool === "filters" ? "none" : "filters")
+        }
+        disabled={!natural}
+      >
+        <IconFilter size={20} />
+        <span>Filtros</span>
+      </button>
+
+      {activeTool === "filters" && natural && (
+        <div className={styles.toolOptions}>
+          <div className={styles.filterGrid}>
+            <button
+              className={`${styles.filterButton} ${
+                activeFilter === "grayscale" ? styles.activeFilter : ""
+              }`}
+              onClick={() => onSelectFilter("grayscale")}
+            >
+              Grises
+            </button>
+            <button
+              className={`${styles.filterButton} ${
+                activeFilter === "sepia" ? styles.activeFilter : ""
+              }`}
+              onClick={() => onSelectFilter("sepia")}
+            >
+              Sepia
+            </button>
+            <button
+              className={`${styles.filterButton} ${
+                activeFilter === "invert" ? styles.activeFilter : ""
+              }`}
+              onClick={() => onSelectFilter("invert")}
+            >
+              Invertir
+            </button>
+          </div>
+
+          {hasFilterChanges && (
+            <>
+              <button
+                className={`${styles.button} ${styles.primary}`}
+                onClick={onApplyFilter}
+                style={{ width: "100%", marginTop: "1rem" }}
+              >
+                Aplicar filtro
+              </button>
+              <button
+                className={styles.button}
+                onClick={onCancelFilter}
                 style={{ width: "100%" }}
               >
                 Cancelar

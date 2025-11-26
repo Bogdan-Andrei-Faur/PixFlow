@@ -263,6 +263,38 @@
   transform: scale(1.1);
 }
 
+/* Quick filters */
+.filterGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.filterButton {
+  padding: 0.75rem;
+  background: #2a2a2a;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filterButton:hover {
+  background: #333;
+  border-color: #4f46e5;
+}
+
+.filterButton.activeFilter {
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: #fff;
+  font-weight: 600;
+}
+
 .cropDarkOverlay {
   position: absolute;
   top: 0;

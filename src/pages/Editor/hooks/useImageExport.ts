@@ -6,7 +6,13 @@ interface UseImageExportProps {
   natural: { w: number; h: number } | null;
   file: File | null;
   completedCrop: PixelCrop | undefined;
-  activeTool: "none" | "crop" | "resize" | "transform" | "adjustments";
+  activeTool:
+    | "none"
+    | "crop"
+    | "resize"
+    | "transform"
+    | "adjustments"
+    | "filters";
   newWidth: number;
   newHeight: number;
 }
