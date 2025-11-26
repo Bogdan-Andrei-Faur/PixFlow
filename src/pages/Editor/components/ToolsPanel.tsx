@@ -1,8 +1,16 @@
 import React from "react";
 import styles from "../Editor.module.css";
-import { IconCrop, IconResize, IconDownload } from "@tabler/icons-react";
+import {
+  IconCrop,
+  IconResize,
+  IconDownload,
+  IconRotate,
+  IconFlipHorizontal,
+  IconFlipVertical,
+  IconRotateClockwise,
+} from "@tabler/icons-react";
 
-export type Tool = "none" | "crop" | "resize";
+export type Tool = "none" | "crop" | "resize" | "transform";
 
 interface NaturalDims {
   w: number;
@@ -37,6 +45,13 @@ interface Props {
   onApplyResize: () => void;
   onCancelResize: () => void;
 
+  // Transform
+  onRotate90: () => void;
+  onRotateMinus90: () => void;
+  onRotate180: () => void;
+  onFlipHorizontal: () => void;
+  onFlipVertical: () => void;
+
   // Export
   onOpenExportModal: () => void;
 }
@@ -57,6 +72,11 @@ const ToolsPanel: React.FC<Props> = ({
   onToggleAspect,
   onApplyResize,
   onCancelResize,
+  onRotate90,
+  onRotateMinus90,
+  onRotate180,
+  onFlipHorizontal,
+  onFlipVertical,
   onOpenExportModal,
 }) => {
   return (
@@ -169,6 +189,79 @@ const ToolsPanel: React.FC<Props> = ({
           >
             Cancelar
           </button>
+        </div>
+      )}
+
+      {/* Transformar (Rotar/Flip) */}
+      <button
+        className={`${styles.toolButton} ${
+          activeTool === "transform" ? styles.active : ""
+        }`}
+        onClick={() =>
+          onSetActiveTool(activeTool === "transform" ? "none" : "transform")
+        }
+        disabled={!natural}
+      >
+        <IconRotate size={20} />
+        <span>Transformar</span>
+      </button>
+
+      {activeTool === "transform" && natural && (
+        <div className={styles.toolOptions}>
+          <div className={styles.transformSection}>
+            <label className={styles.optionLabel}>Rotar:</label>
+            <div className={styles.transformButtons}>
+              <button
+                className={`${styles.button} ${styles.transformButton}`}
+                onClick={onRotateMinus90}
+                title="Rotar 90° izquierda"
+              >
+                <IconRotateClockwise
+                  size={20}
+                  style={{ transform: "scaleX(-1)" }}
+                />
+                90° ←
+              </button>
+              <button
+                className={`${styles.button} ${styles.transformButton}`}
+                onClick={onRotate90}
+                title="Rotar 90° derecha"
+              >
+                <IconRotateClockwise size={20} />
+                90° →
+              </button>
+              <button
+                className={`${styles.button} ${styles.transformButton}`}
+                onClick={onRotate180}
+                title="Rotar 180°"
+              >
+                <IconRotate size={20} />
+                180°
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.transformSection}>
+            <label className={styles.optionLabel}>Voltear:</label>
+            <div className={styles.transformButtons}>
+              <button
+                className={`${styles.button} ${styles.transformButton}`}
+                onClick={onFlipHorizontal}
+                title="Voltear horizontal"
+              >
+                <IconFlipHorizontal size={20} />
+                Horizontal
+              </button>
+              <button
+                className={`${styles.button} ${styles.transformButton}`}
+                onClick={onFlipVertical}
+                title="Voltear vertical"
+              >
+                <IconFlipVertical size={20} />
+                Vertical
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

@@ -198,6 +198,28 @@
   margin: 0;
 }
 
+/* Transform tool */
+.transformSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.transformButtons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.5rem;
+}
+
+.transformButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.6rem 0.5rem;
+  font-size: 0.8rem;
+}
+
 .cropDarkOverlay {
   position: absolute;
   top: 0;

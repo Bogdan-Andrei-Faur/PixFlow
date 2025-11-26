@@ -52,7 +52,9 @@ const TopBar: React.FC<Props> = ({
         Editor PixFlow <IconEdit size={24} />
       </h1>
       <span className={styles.metaInfo}>
-        {fileName ? `${fileName} • ${formatBytes(fileSize || 0)}` : "Sin imagen"}
+        {fileName
+          ? `${fileName} • ${formatBytes(fileSize || 0)}`
+          : "Sin imagen"}
       </span>
       <div className={styles.spacer} />
 

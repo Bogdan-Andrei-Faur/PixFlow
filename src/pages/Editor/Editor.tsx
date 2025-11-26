@@ -17,6 +17,7 @@ import { usePanDrag } from "./hooks/usePanDrag";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { useImageExport } from "./hooks/useImageExport";
 import { useResizeTool } from "./hooks/useResizeTool";
+import { useTransformTool } from "./hooks/useTransformTool";
 import { IconUpload, IconHome } from "@tabler/icons-react";
 
 const Editor: React.FC = () => {
@@ -32,7 +33,7 @@ const Editor: React.FC = () => {
   );
   const [theme, setTheme] = React.useState<"dark" | "light">("dark");
   const [activeTool, setActiveTool] = React.useState<
-    "none" | "crop" | "resize"
+    "none" | "crop" | "resize" | "transform"
   >("none");
   const [isExportModalOpen, setIsExportModalOpen] = React.useState(false);
 
@@ -66,6 +67,15 @@ const Editor: React.FC = () => {
     setNatural,
     fitToScreen,
     onBeforeResize: () => history.saveSnapshot(),
+  });
+
+  // Herramienta de transformación (rotar/flip)
+  const transformTool = useTransformTool({
+    imgRef,
+    setSourceFile,
+    setNatural,
+    fitToScreen,
+    onBeforeTransform: () => history.saveSnapshot(),
   });
 
   // Historial (undo/redo)
@@ -135,7 +145,7 @@ const Editor: React.FC = () => {
     navigate("/");
   };
 
-  const handleToolChange = (t: "none" | "crop" | "resize") => {
+  const handleToolChange = (t: "none" | "crop" | "resize" | "transform") => {
     if (t === "none" && activeTool === "crop") {
       cropTool.clearCrop();
     }
@@ -231,6 +241,11 @@ const Editor: React.FC = () => {
             resizeTool.cancelResize();
             setActiveTool("none");
           }}
+          onRotate90={() => transformTool.applyRotation(90)}
+          onRotateMinus90={() => transformTool.applyRotation(-90)}
+          onRotate180={() => transformTool.applyRotation(180)}
+          onFlipHorizontal={() => transformTool.applyFlip("horizontal")}
+          onFlipVertical={() => transformTool.applyFlip("vertical")}
           onOpenExportModal={() => setIsExportModalOpen(true)}
         />
 
