@@ -18,6 +18,7 @@ import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { useImageExport } from "./hooks/useImageExport";
 import { useResizeTool } from "./hooks/useResizeTool";
 import { useTransformTool } from "./hooks/useTransformTool";
+import { useAdjustmentsTool } from "./hooks/useAdjustmentsTool";
 import { IconUpload, IconHome } from "@tabler/icons-react";
 
 const Editor: React.FC = () => {
@@ -33,7 +34,7 @@ const Editor: React.FC = () => {
   );
   const [theme, setTheme] = React.useState<"dark" | "light">("dark");
   const [activeTool, setActiveTool] = React.useState<
-    "none" | "crop" | "resize" | "transform"
+    "none" | "crop" | "resize" | "transform" | "adjustments"
   >("none");
   const [isExportModalOpen, setIsExportModalOpen] = React.useState(false);
 
@@ -76,6 +77,14 @@ const Editor: React.FC = () => {
     setNatural,
     fitToScreen,
     onBeforeTransform: () => history.saveSnapshot(),
+  });
+
+  // Herramienta de ajustes (brillo/contraste/saturación)
+  const adjustmentsTool = useAdjustmentsTool({
+    imgRef,
+    setSourceFile,
+    fitToScreen,
+    onBeforeAdjust: () => history.saveSnapshot(),
   });
 
   // Historial (undo/redo)
@@ -145,12 +154,17 @@ const Editor: React.FC = () => {
     navigate("/");
   };
 
-  const handleToolChange = (t: "none" | "crop" | "resize" | "transform") => {
+  const handleToolChange = (
+    t: "none" | "crop" | "resize" | "transform" | "adjustments"
+  ) => {
     if (t === "none" && activeTool === "crop") {
       cropTool.clearCrop();
     }
     if (t === "resize" && activeTool !== "resize") {
       resizeTool.initializeResize();
+    }
+    if (t === "none" && activeTool === "adjustments") {
+      adjustmentsTool.cancelAdjustments();
     }
     setActiveTool(t);
   };
@@ -246,6 +260,21 @@ const Editor: React.FC = () => {
           onRotate180={() => transformTool.applyRotation(180)}
           onFlipHorizontal={() => transformTool.applyFlip("horizontal")}
           onFlipVertical={() => transformTool.applyFlip("vertical")}
+          brightness={adjustmentsTool.brightness}
+          contrast={adjustmentsTool.contrast}
+          saturation={adjustmentsTool.saturation}
+          onChangeBrightness={adjustmentsTool.setBrightness}
+          onChangeContrast={adjustmentsTool.setContrast}
+          onChangeSaturation={adjustmentsTool.setSaturation}
+          onApplyAdjustments={() => {
+            adjustmentsTool.applyAdjustments();
+            setActiveTool("none");
+          }}
+          onCancelAdjustments={() => {
+            adjustmentsTool.cancelAdjustments();
+            setActiveTool("none");
+          }}
+          hasAdjustmentChanges={adjustmentsTool.hasChanges}
           onOpenExportModal={() => setIsExportModalOpen(true)}
         />
 
@@ -333,6 +362,10 @@ const Editor: React.FC = () => {
                 style={{
                   transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,
                   display: activeTool === "crop" ? "none" : "block",
+                  filter:
+                    activeTool === "adjustments"
+                      ? adjustmentsTool.previewFilter
+                      : "none",
                 }}
               />
 

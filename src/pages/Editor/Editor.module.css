@@ -220,6 +220,49 @@
   font-size: 0.8rem;
 }
 
+/* Adjustments tool */
+.adjustmentSlider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, #333 0%, #4f46e5 100%);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: 0.5rem;
+}
+
+.adjustmentSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #4f46e5;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+}
+
+.adjustmentSlider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.adjustmentSlider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #4f46e5;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+}
+
+.adjustmentSlider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+}
+
 .cropDarkOverlay {
   position: absolute;
   top: 0;

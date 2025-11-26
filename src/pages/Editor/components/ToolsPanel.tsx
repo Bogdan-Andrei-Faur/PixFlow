@@ -8,9 +8,10 @@ import {
   IconFlipHorizontal,
   IconFlipVertical,
   IconRotateClockwise,
+  IconAdjustments,
 } from "@tabler/icons-react";
 
-export type Tool = "none" | "crop" | "resize" | "transform";
+export type Tool = "none" | "crop" | "resize" | "transform" | "adjustments";
 
 interface NaturalDims {
   w: number;
@@ -52,6 +53,17 @@ interface Props {
   onFlipHorizontal: () => void;
   onFlipVertical: () => void;
 
+  // Adjustments
+  brightness: number;
+  contrast: number;
+  saturation: number;
+  onChangeBrightness: (value: number) => void;
+  onChangeContrast: (value: number) => void;
+  onChangeSaturation: (value: number) => void;
+  onApplyAdjustments: () => void;
+  onCancelAdjustments: () => void;
+  hasAdjustmentChanges: boolean;
+
   // Export
   onOpenExportModal: () => void;
 }
@@ -77,6 +89,15 @@ const ToolsPanel: React.FC<Props> = ({
   onRotate180,
   onFlipHorizontal,
   onFlipVertical,
+  brightness,
+  contrast,
+  saturation,
+  onChangeBrightness,
+  onChangeContrast,
+  onChangeSaturation,
+  onApplyAdjustments,
+  onCancelAdjustments,
+  hasAdjustmentChanges,
   onOpenExportModal,
 }) => {
   return (
@@ -262,6 +283,82 @@ const ToolsPanel: React.FC<Props> = ({
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Ajustes (Brillo/Contraste/Saturación) */}
+      <button
+        className={`${styles.toolButton} ${
+          activeTool === "adjustments" ? styles.active : ""
+        }`}
+        onClick={() =>
+          onSetActiveTool(activeTool === "adjustments" ? "none" : "adjustments")
+        }
+        disabled={!natural}
+      >
+        <IconAdjustments size={20} />
+        <span>Ajustes</span>
+      </button>
+
+      {activeTool === "adjustments" && natural && (
+        <div className={styles.toolOptions}>
+          <label className={styles.optionLabel}>
+            Brillo: {brightness > 0 ? "+" : ""}
+            {brightness}%
+            <input
+              type="range"
+              min="-100"
+              max="100"
+              value={brightness}
+              onChange={(e) => onChangeBrightness(parseInt(e.target.value))}
+              className={styles.adjustmentSlider}
+            />
+          </label>
+
+          <label className={styles.optionLabel}>
+            Contraste: {contrast > 0 ? "+" : ""}
+            {contrast}%
+            <input
+              type="range"
+              min="-100"
+              max="100"
+              value={contrast}
+              onChange={(e) => onChangeContrast(parseInt(e.target.value))}
+              className={styles.adjustmentSlider}
+            />
+          </label>
+
+          <label className={styles.optionLabel}>
+            Saturación: {saturation > 0 ? "+" : ""}
+            {saturation}%
+            <input
+              type="range"
+              min="-100"
+              max="100"
+              value={saturation}
+              onChange={(e) => onChangeSaturation(parseInt(e.target.value))}
+              className={styles.adjustmentSlider}
+            />
+          </label>
+
+          {hasAdjustmentChanges && (
+            <>
+              <button
+                className={`${styles.button} ${styles.primary}`}
+                onClick={onApplyAdjustments}
+                style={{ width: "100%", marginTop: "0.5rem" }}
+              >
+                Aplicar ajustes
+              </button>
+              <button
+                className={styles.button}
+                onClick={onCancelAdjustments}
+                style={{ width: "100%" }}
+              >
+                Cancelar
+              </button>
+            </>
+          )}
         </div>
       )}
 
