@@ -8,6 +8,7 @@ import {
   IconLogout,
   IconArrowBackUp,
   IconArrowForwardUp,
+  IconPhotoUp,
 } from "@tabler/icons-react";
 
 interface Props {
@@ -21,6 +22,7 @@ interface Props {
   onRedo?: () => void;
   canUndo?: boolean;
   canRedo?: boolean;
+  onLoadNewImage?: () => void;
 }
 
 const TopBar: React.FC<Props> = ({
@@ -34,6 +36,7 @@ const TopBar: React.FC<Props> = ({
   onRedo,
   canUndo = false,
   canRedo = false,
+  onLoadNewImage,
 }) => {
   return (
     <div className={styles.topBar}>
@@ -67,6 +70,15 @@ const TopBar: React.FC<Props> = ({
       >
         {theme === "dark" ? <IconMoon size={16} /> : <IconSun size={16} />}
       </button>
+      {onLoadNewImage && (
+        <button
+          className={styles.button}
+          onClick={onLoadNewImage}
+          aria-label="Cargar nueva imagen"
+        >
+          <IconPhotoUp size={16} /> Nueva
+        </button>
+      )}
       <button className={styles.button} onClick={onReset}>
         Reset <IconRestore size={16} />
       </button>

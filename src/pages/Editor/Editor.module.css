@@ -376,6 +376,8 @@
   justify-content: center;
   font-size: 1rem;
   color: #999;
+  width: 100%;
+  height: 100%;
 }
 
 /* Patrón de transparencia: claro */

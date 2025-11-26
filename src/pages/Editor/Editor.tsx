@@ -16,11 +16,13 @@ import { usePanDrag } from "./hooks/usePanDrag";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { useImageExport } from "./hooks/useImageExport";
 import { useResizeTool } from "./hooks/useResizeTool";
+import { IconUpload, IconHome } from "@tabler/icons-react";
 
 const Editor: React.FC = () => {
   const { objectURL, file, clear, setSourceFile, resetToOriginal } =
     useImageEditor();
   const navigate = useNavigate();
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
 
   const imgRef = React.useRef<HTMLImageElement | null>(null);
   const viewportRef = React.useRef<HTMLDivElement | null>(null);
@@ -140,8 +142,35 @@ const Editor: React.FC = () => {
     setActiveTool(t);
   };
 
+  const handleLoadNewImage = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile && selectedFile.type.startsWith("image/")) {
+      // Limpiar historial y estado
+      history.clearHistory();
+      cropTool.clearCrop();
+      setActiveTool("none");
+      resetView();
+
+      // Cargar nueva imagen
+      setSourceFile(selectedFile);
+    }
+    // Limpiar input para permitir seleccionar el mismo archivo
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   return (
     <div className={styles.editorRoot}>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileSelect}
+        style={{ display: "none" }}
+      />
       <TopBar
         fileName={file?.name}
         fileSizeKB={file ? (file.size / 1024).toFixed(1) : undefined}
@@ -153,6 +182,7 @@ const Editor: React.FC = () => {
         onRedo={history.redo}
         canUndo={history.canUndo}
         canRedo={history.canRedo}
+        onLoadNewImage={handleLoadNewImage}
       />
 
       <div className={styles.mainContent}>
@@ -198,7 +228,54 @@ const Editor: React.FC = () => {
         >
           {!objectURL && (
             <div className={styles.emptyState}>
-              No hay imagen cargada. Vuelve y selecciona una.
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "1.5rem",
+                  maxWidth: "400px",
+                  textAlign: "center",
+                }}
+              >
+                <IconUpload size={80} style={{ opacity: 0.3 }} />
+                <div>
+                  <h2
+                    style={{
+                      marginBottom: "0.75rem",
+                      fontSize: "1.5rem",
+                      fontWeight: 600,
+                    }}
+                  >
+                    No hay imagen cargada
+                  </h2>
+                  <p
+                    style={{
+                      opacity: 0.6,
+                      fontSize: "0.95rem",
+                      lineHeight: "1.5",
+                    }}
+                  >
+                    La imagen se perdió al refrescar la página.
+                    <br />
+                    Vuelve a cargar una imagen para continuar editando.
+                  </p>
+                </div>
+                <button
+                  className={`${styles.button} ${styles.primary}`}
+                  onClick={() => navigate("/")}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    padding: "0.75rem 1.5rem",
+                    fontSize: "1rem",
+                  }}
+                >
+                  <IconHome size={20} />
+                  Volver a cargar imagen
+                </button>
+              </div>
             </div>
           )}
           {objectURL && (
