@@ -12,7 +12,8 @@ import { clamp } from "./utils/number";
 import { useZoomPan } from "./hooks/useZoomPan";
 
 const Editor: React.FC = () => {
-  const { objectURL, file, clear, setSourceFile } = useImageEditor();
+  const { objectURL, file, clear, setSourceFile, resetToOriginal } =
+    useImageEditor();
   const navigate = useNavigate();
   const [isDragging, setIsDragging] = React.useState(false);
   const dragStart = React.useRef<{
@@ -27,6 +28,16 @@ const Editor: React.FC = () => {
     null
   );
   const [theme, setTheme] = React.useState<"dark" | "light">("dark");
+
+  // Historial de ediciones (deshacer/rehacer)
+  type Snapshot = {
+    file: File;
+    natural: { w: number; h: number };
+    zoom: number;
+    offset: { x: number; y: number };
+  };
+  const [undoStack, setUndoStack] = React.useState<Snapshot[]>([]);
+  const [redoStack, setRedoStack] = React.useState<Snapshot[]>([]);
 
   // Zoom y Pan centralizados en un hook
   const {
@@ -56,7 +67,6 @@ const Editor: React.FC = () => {
     "png" | "jpeg" | "webp"
   >("png");
   const [jpegQuality, setJpegQuality] = React.useState(0.92);
-  const [cropApplied, setCropApplied] = React.useState(false);
 
   // Si no hay imagen, mostrar estado vacío
   React.useEffect(() => {
@@ -64,6 +74,13 @@ const Editor: React.FC = () => {
       // Podríamos redirigir automáticamente: navigate('/')
     }
   }, [objectURL]);
+
+  // Ajustar zoom cuando cambie la imagen o sus dimensiones naturales
+  React.useEffect(() => {
+    if (objectURL && natural && imgRef.current) {
+      requestAnimationFrame(() => fitToScreen());
+    }
+  }, [objectURL, natural, fitToScreen]);
 
   const startDrag = (e: React.PointerEvent) => {
     if (!objectURL || !imgRef.current || !viewportRef.current) return;
@@ -103,6 +120,24 @@ const Editor: React.FC = () => {
   const resetView = () => {
     setZoom(1);
     setOffset({ x: 0, y: 0 });
+  };
+
+  const resetAll = () => {
+    // Restaurar imagen original (si existe)
+    resetToOriginal();
+
+    // Limpiar estado de edición
+    setActiveTool("none");
+    setCrop(undefined);
+    setCompletedCrop(undefined);
+    setCompletedPercentCrop(undefined);
+
+    // Limpiar historial
+    setUndoStack([]);
+    setRedoStack([]);
+
+    // Reset de vista; el ajuste a pantalla ocurrirá automáticamente
+    resetView();
   };
 
   // fitToScreen y setOneToOne vienen del hook
@@ -148,9 +183,16 @@ const Editor: React.FC = () => {
     canvas.toBlob((blob) => {
       if (!blob) return;
 
-      // Revocar la URL anterior si existe
-      if (objectURL && cropApplied) {
-        URL.revokeObjectURL(objectURL);
+      // Guardar snapshot actual para poder deshacer
+      if (file && natural) {
+        const snap: Snapshot = {
+          file,
+          natural: { ...natural },
+          zoom,
+          offset: { ...offset },
+        };
+        setUndoStack((s) => [...s, snap]);
+        setRedoStack([]);
       }
 
       const newFile = new File([blob], file?.name || "cropped.png", {
@@ -167,7 +209,6 @@ const Editor: React.FC = () => {
       setCrop(undefined);
       setCompletedCrop(undefined);
       setCompletedPercentCrop(undefined);
-      setCropApplied(true);
       setActiveTool("none");
 
       // Reset zoom y offset
@@ -175,8 +216,79 @@ const Editor: React.FC = () => {
     });
   };
 
+  const undo = React.useCallback(() => {
+    if (undoStack.length === 0) return;
+    const prev = undoStack[undoStack.length - 1];
+    const current: Snapshot | null =
+      file && natural ? { file, natural, zoom, offset } : null;
+
+    // Restaurar imagen y vista
+    setSourceFile(prev.file);
+    setNatural({ ...prev.natural });
+    setZoom(prev.zoom);
+    setOffset({ ...prev.offset });
+
+    // Limpiar estados de recorte/herramienta
+    setActiveTool("none");
+    setCrop(undefined);
+    setCompletedCrop(undefined);
+    setCompletedPercentCrop(undefined);
+
+    setUndoStack((s) => s.slice(0, -1));
+    if (current) setRedoStack((r) => [...r, current]);
+  }, [
+    undoStack,
+    file,
+    natural,
+    zoom,
+    offset,
+    setSourceFile,
+    setZoom,
+    setOffset,
+  ]);
+
+  const redo = React.useCallback(() => {
+    if (redoStack.length === 0) return;
+    const next = redoStack[redoStack.length - 1];
+    const current: Snapshot | null =
+      file && natural ? { file, natural, zoom, offset } : null;
+
+    setSourceFile(next.file);
+    setNatural({ ...next.natural });
+    setZoom(next.zoom);
+    setOffset({ ...next.offset });
+
+    setActiveTool("none");
+    setCrop(undefined);
+    setCompletedCrop(undefined);
+    setCompletedPercentCrop(undefined);
+
+    setRedoStack((s) => s.slice(0, -1));
+    if (current) setUndoStack((u) => [...u, current]);
+  }, [
+    redoStack,
+    file,
+    natural,
+    zoom,
+    offset,
+    setSourceFile,
+    setZoom,
+    setOffset,
+  ]);
+
   React.useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      // Deshacer / Rehacer
+      if (e.metaKey && !e.shiftKey && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        undo();
+        return;
+      }
+      if (e.metaKey && e.shiftKey && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        redo();
+        return;
+      }
       if (e.metaKey && (e.key === "+" || e.key === "=")) {
         e.preventDefault();
         setZoom((z) => clamp(parseFloat((z * 1.1).toFixed(3)), 0.1, 8));
@@ -191,7 +303,7 @@ const Editor: React.FC = () => {
     window.addEventListener("keydown", onKeyDown, { capture: true });
     return () =>
       window.removeEventListener("keydown", onKeyDown, { capture: true });
-  }, [fitToScreen, setZoom]);
+  }, [fitToScreen, setZoom, undo, redo]);
 
   const exitEditor = () => {
     clear();
@@ -276,8 +388,12 @@ const Editor: React.FC = () => {
         fileSizeKB={file ? (file.size / 1024).toFixed(1) : undefined}
         theme={theme}
         onToggleTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
-        onReset={resetView}
+        onReset={resetAll}
         onExit={exitEditor}
+        onUndo={undo}
+        onRedo={redo}
+        canUndo={undoStack.length > 0}
+        canRedo={redoStack.length > 0}
       />
 
       <div className={styles.mainContent}>
@@ -316,7 +432,6 @@ const Editor: React.FC = () => {
             setCompletedCrop(undefined);
             setCompletedPercentCrop(undefined);
             setActiveTool("none");
-            setCropApplied(false);
           }}
           newWidth={newWidth}
           newHeight={newHeight}
@@ -373,7 +488,6 @@ const Editor: React.FC = () => {
                 onLoad={(e) => {
                   const t = e.currentTarget;
                   setNatural({ w: t.naturalWidth, h: t.naturalHeight });
-                  requestAnimationFrame(() => fitToScreen());
                 }}
                 style={{
                   transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,

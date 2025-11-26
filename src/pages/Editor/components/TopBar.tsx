@@ -6,6 +6,8 @@ import {
   IconSun,
   IconRestore,
   IconLogout,
+  IconArrowBackUp,
+  IconArrowForwardUp,
 } from "@tabler/icons-react";
 
 interface Props {
@@ -15,6 +17,10 @@ interface Props {
   onToggleTheme: () => void;
   onReset: () => void;
   onExit: () => void;
+  onUndo?: () => void;
+  onRedo?: () => void;
+  canUndo?: boolean;
+  canRedo?: boolean;
 }
 
 const TopBar: React.FC<Props> = ({
@@ -24,6 +30,10 @@ const TopBar: React.FC<Props> = ({
   onToggleTheme,
   onReset,
   onExit,
+  onUndo,
+  onRedo,
+  canUndo = false,
+  canRedo = false,
 }) => {
   return (
     <div className={styles.topBar}>
@@ -34,6 +44,22 @@ const TopBar: React.FC<Props> = ({
         {fileName ? `${fileName} • ${fileSizeKB} KB` : "Sin imagen"}
       </span>
       <div className={styles.spacer} />
+      <button
+        className={`${styles.button} ${styles.iconButton}`}
+        onClick={onUndo}
+        aria-label="Deshacer"
+        disabled={!canUndo}
+      >
+        <IconArrowBackUp size={16} />
+      </button>
+      <button
+        className={`${styles.button} ${styles.iconButton}`}
+        onClick={onRedo}
+        aria-label="Rehacer"
+        disabled={!canRedo}
+      >
+        <IconArrowForwardUp size={16} />
+      </button>
       <button
         className={`${styles.button} ${styles.iconButton}`}
         onClick={onToggleTheme}
