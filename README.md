@@ -1,73 +1,183 @@
-# React + TypeScript + Vite
+# PixFlow - Editor de Imágenes Online
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![PixFlow](public/photo-dark.svg)
 
-Currently, two official plugins are available:
+## Editor de imágenes web ligero y completo, construido con React 19 + TypeScript + Vite
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+[🌐 Demo en vivo](https://pixflow.andreifaur.dev) | [📖 Documentación](#-características) | [🚀 Inicio rápido](#-instalación)
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ✨ Características
 
-## Expanding the ESLint configuration
+### Herramientas de Edición
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **✂️ Recorte** - Selección libre con vista previa en tiempo real
+- **📏 Redimensionar** - Ajuste de dimensiones con bloqueo de aspecto
+- **🔄 Transformar** - Rotación (90°, -90°, 180°) y volteo (H/V)
+- **🎨 Ajustes** - Brillo, contraste y saturación con sliders
+- **🖼️ Filtros rápidos** - Escala de grises, sepia, invertir
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Funcionalidades
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **⏪ Deshacer/Rehacer** - Historial completo de cambios con snapshots
+- **🔍 Zoom y Pan** - Control preciso con rueda del ratón y atajos
+- **💾 Exportación** - PNG, JPEG, WebP con ajuste de calidad
+- **📱 Responsive** - Diseño adaptable a cualquier pantalla
+- **🌙 Tema oscuro/claro** - Cambio visual con patrón de transparencia
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Atajos de Teclado
+
+- `Cmd/Ctrl + Z` - Deshacer
+- `Cmd/Ctrl + Shift + Z` - Rehacer
+- `Cmd/Ctrl + +` - Aumentar zoom
+- `Cmd/Ctrl + -` - Reducir zoom
+- `Cmd/Ctrl + 0` - Ajustar a pantalla
+
+## 🚀 Instalación
+
+### Requisitos previos
+
+- Node.js 20+
+- npm o yarn
+
+### Clonar e instalar
+
+```bash
+# Clonar repositorio
+git clone https://github.com/Bogdan-Andrei-Faur/PixFlow.git
+cd PixFlow
+
+# Instalar dependencias
+npm install
+
+# Iniciar servidor de desarrollo
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+El editor estará disponible en `http://localhost:5173`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 📦 Tecnologías
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Categoría    | Tecnologías                  |
+| ------------ | ---------------------------- |
+| **Frontend** | React 19.2, TypeScript 5.9   |
+| **Build**    | Vite 7.2                     |
+| **Routing**  | React Router 7.9             |
+| **Edición**  | Canvas API, react-image-crop |
+| **Estilos**  | CSS Modules                  |
+| **Iconos**   | Tabler Icons React           |
+| **Deploy**   | GitHub Pages, GitHub Actions |
+
+## 🏗️ Arquitectura
+
+### Patrón de Herramientas: Preview → Apply → Undo
+
+Todas las herramientas de edición siguen este flujo:
+
+```typescript
+// 1. Preview (CSS - no destructivo)
+const previewFilter = "grayscale(100%)";
+<img style={{ filter: previewFilter }} />;
+
+// 2. Apply (Canvas - destructivo)
+ctx.filter = previewFilter;
+ctx.drawImage(img, 0, 0);
+canvas.toBlob((blob) => {
+  const newFile = new File([blob], "filtered.png");
+  setSourceFile(newFile); // Guarda snapshot automático
+});
+
+// 3. Undo/Redo
+history.saveSnapshot(); // Antes de aplicar
+history.undo(); // Restaura estado anterior
 ```
+
+### Estructura de Carpetas
+
+```text
+src/
+├── pages/
+│   ├── Home/              # Página de carga de imagen
+│   ├── Editor/            # Editor principal
+│   │   ├── hooks/         # Custom hooks de herramientas
+│   │   │   ├── useCropTool.ts
+│   │   │   ├── useResizeTool.ts
+│   │   │   ├── useTransformTool.ts
+│   │   │   ├── useAdjustmentsTool.ts
+│   │   │   ├── useQuickFilters.ts
+│   │   │   ├── useEditorHistory.ts  # Undo/Redo
+│   │   │   └── useZoomPan.ts
+│   │   └── components/    # UI del editor
+│   └── NotFound/          # Página 404
+├── context/
+│   └── ImageEditorContext.tsx  # Estado global
+└── components/
+    └── Alert/             # Componente de alertas
+```
+
+### Gestión de Estado
+
+- **Global**: `ImageEditorContext` - archivo, objectURL, originalFile
+- **Historial**: `useEditorHistory` - snapshots con undo/redo
+- **Local**: Cada herramienta maneja su estado (crop rect, valores de sliders, etc.)
+
+## 🛠️ Scripts Disponibles
+
+```bash
+# Desarrollo
+npm run dev          # Servidor local con HMR
+
+# Producción
+npm run build        # Build + copia index.html → 404.html (SPA)
+npm run preview      # Preview del build local
+
+# Calidad de código
+npm run lint         # ESLint
+```
+
+## 🌐 Despliegue
+
+El proyecto se despliega automáticamente en GitHub Pages mediante GitHub Actions:
+
+1. Push a `main` → Dispara workflow
+2. Build genera `dist/` con `404.html` (fallback SPA)
+3. Agrega CNAME (`pixflow.andreifaur.dev`)
+4. Actualiza timestamp en `health.json`
+5. Deploy a GitHub Pages
+
+**Configuración crítica SPA**:
+
+```json
+// package.json
+"build": "tsc -b && vite build && cp dist/index.html dist/404.html"
+```
+
+Esto permite que rutas como `/editor` funcionen con acceso directo (React Router maneja el routing client-side).
+
+## 🤝 Contribuir
+
+Las contribuciones son bienvenidas. Para cambios importantes:
+
+1. Fork el proyecto
+2. Crea una rama (`git checkout -b feature/nueva-herramienta`)
+3. Commit cambios (`git commit -m 'feat: agregar herramienta de desenfoque'`)
+4. Push a la rama (`git push origin feature/nueva-herramienta`)
+5. Abre un Pull Request
+
+Consulta `.github/copilot-instructions.md` para patrones de código del proyecto.
+
+## 📄 Licencia
+
+Este proyecto es de código abierto y está disponible bajo la licencia MIT.
+
+## 👤 Autor
+
+### Bogdan Andrei Faur
+
+- GitHub: [@Bogdan-Andrei-Faur](https://github.com/Bogdan-Andrei-Faur)
+- Web: [pixflow.andreifaur.dev](https://pixflow.andreifaur.dev)
+
+---
+
+Hecho con ❤️ usando React + TypeScript + Vite
