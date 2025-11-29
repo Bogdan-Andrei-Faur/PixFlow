@@ -10,8 +10,8 @@ const LanguageSelector: React.FC = () => {
   const currentLanguage = i18n.language.split("-")[0]; // "es-ES" -> "es"
 
   const languages = [
-    { code: "es", name: "Español", flag: "🇪🇸" },
     { code: "en", name: "English", flag: "🇬🇧" },
+    { code: "es", name: "Español", flag: "🇪🇸" },
   ];
 
   const changeLanguage = (langCode: string) => {
