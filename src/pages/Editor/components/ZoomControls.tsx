@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styles from "../Editor.module.css";
 import {
   IconMinus,
@@ -24,6 +25,8 @@ const ZoomControls: React.FC<Props> = ({
   onFit,
   onOneToOne,
 }) => {
+  const { t } = useTranslation("editor");
+
   return (
     <div
       className={styles.zoomControls}
@@ -35,7 +38,7 @@ const ZoomControls: React.FC<Props> = ({
       <button
         className={`${styles.button} ${styles.iconButton}`}
         onClick={onZoomOut}
-        aria-label="Reducir zoom"
+        aria-label={t("zoom.out")}
       >
         <IconMinus size={16} />
       </button>
@@ -52,15 +55,15 @@ const ZoomControls: React.FC<Props> = ({
       <button
         className={`${styles.button} ${styles.iconButton}`}
         onClick={onZoomIn}
-        aria-label="Aumentar zoom"
+        aria-label={t("zoom.in")}
       >
         <IconPlus size={16} />
       </button>
       <button className={styles.button} onClick={onFit}>
-        Encajar <IconObjectScan size={16} />
+        {t("zoom.fit")} <IconObjectScan size={16} />
       </button>
       <button className={styles.button} onClick={onOneToOne}>
-        1:1 <IconAspectRatio size={16} />
+        {t("zoom.oneToOne")} <IconAspectRatio size={16} />
       </button>
     </div>
   );

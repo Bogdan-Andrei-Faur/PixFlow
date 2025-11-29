@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./Alert.module.css";
 
 interface AlertProps {
@@ -14,6 +15,7 @@ const Alert: React.FC<AlertProps> = ({
   autoClose = true,
   autoCloseDelay = 5000,
 }) => {
+  const { t } = useTranslation("editor");
   const [isClosing, setIsClosing] = React.useState(false);
 
   const handleClose = () => {
@@ -39,13 +41,13 @@ const Alert: React.FC<AlertProps> = ({
     <div className={`${styles.alert} ${isClosing ? styles.closing : ""}`}>
       <div className={styles.alertIcon}>⚠️</div>
       <div className={styles.alertContent}>
-        <p className={styles.alertTitle}>Error</p>
+        <p className={styles.alertTitle}>{t("alert.title")}</p>
         <p className={styles.alertMessage}>{message}</p>
       </div>
       <button
         className={styles.alertClose}
         onClick={handleClose}
-        aria-label="Cerrar alerta"
+        aria-label={t("alert.title")}
       >
         ✕
       </button>

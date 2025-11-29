@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./ImageUploader.module.css";
 
 interface ImageUploaderProps {
@@ -12,6 +13,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   maxSizeMB,
   onError,
 }) => {
+  const { t } = useTranslation("home");
   const [isDragActive, setIsDragActive] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement | null>(null);
 
@@ -22,14 +24,14 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
     // Validar tipo de archivo
     if (!file.type.startsWith("image/")) {
-      onError("Solo se permiten archivos de imagen (PNG, JPG, etc.)");
+      onError(t("errors.invalidType"));
       return;
     }
 
     // Validar tamaño del archivo
     const maxSizeBytes = maxSizeMB * 1024 * 1024;
     if (file.size > maxSizeBytes) {
-      onError(`El tamaño del archivo excede el límite de ${maxSizeMB} MB.`);
+      onError(t("errors.sizeExceeded", { maxSize: maxSizeMB }));
       return;
     }
 
@@ -86,9 +88,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       />
       <div className={styles.dropZoneContent}>
         <div className={styles.uploadIcon}>📁</div>
-        <p className={styles.dropZoneText}>Arrastra una imagen aquí</p>
+        <p className={styles.dropZoneText}>{t("upload.dragDrop")}</p>
         <p className={styles.dropZoneSubtext}>
-          o haz clic para seleccionar (máx. {maxSizeMB}MB)
+          {t("upload.clickSelect", { maxSize: maxSizeMB })}
         </p>
       </div>
     </div>

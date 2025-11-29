@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./Editor.module.css";
 import { useImageEditor } from "../../context/useImageEditor";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,7 @@ import { useQuickFilters } from "./hooks/useQuickFilters";
 import { IconUpload, IconHome } from "@tabler/icons-react";
 
 const Editor: React.FC = () => {
+  const { t } = useTranslation("editor");
   const { objectURL, file, clear, setSourceFile, resetToOriginal } =
     useImageEditor();
   const navigate = useNavigate();
@@ -329,7 +331,7 @@ const Editor: React.FC = () => {
                       fontWeight: 600,
                     }}
                   >
-                    No hay imagen cargada
+                    {t("noImage.title")}
                   </h2>
                   <p
                     style={{
@@ -338,9 +340,7 @@ const Editor: React.FC = () => {
                       lineHeight: "1.5",
                     }}
                   >
-                    La imagen se perdió al refrescar la página.
-                    <br />
-                    Vuelve a cargar una imagen para continuar editando.
+                    {t("noImage.description")}
                   </p>
                 </div>
                 <button
@@ -355,7 +355,7 @@ const Editor: React.FC = () => {
                   }}
                 >
                   <IconHome size={20} />
-                  Volver a cargar imagen
+                  {t("noImage.button")}
                 </button>
               </div>
             </div>

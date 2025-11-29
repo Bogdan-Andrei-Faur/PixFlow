@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styles from "../Editor.module.css";
 import {
   IconCrop,
@@ -119,9 +120,11 @@ const ToolsPanel: React.FC<Props> = ({
   hasFilterChanges,
   onOpenExportModal,
 }) => {
+  const { t } = useTranslation(["editor", "common"]);
+
   return (
     <div className={styles.toolsPanel}>
-      <h3 className={styles.panelTitle}>Herramientas</h3>
+      <h3 className={styles.panelTitle}>{t("editor:tools.title")}</h3>
 
       {/* Recortar */}
       <button
@@ -138,14 +141,17 @@ const ToolsPanel: React.FC<Props> = ({
         }}
       >
         <IconCrop size={20} />
-        <span>Recortar</span>
+        <span>{t("editor:tools.crop.name")}</span>
       </button>
 
       {activeTool === "crop" && (
         <div className={styles.toolOptions}>
           {cropRect && (
             <p className={styles.cropInfo}>
-              {Math.round(cropRect.width)} × {Math.round(cropRect.height)} px
+              {t("editor:tools.crop.info", {
+                width: Math.round(cropRect.width),
+                height: Math.round(cropRect.height),
+              })}
             </p>
           )}
           {cropRect && cropRect.width > 0 && cropRect.height > 0 ? (
@@ -155,20 +161,18 @@ const ToolsPanel: React.FC<Props> = ({
                 onClick={onApplyCrop}
                 style={{ width: "100%" }}
               >
-                Aplicar recorte
+                {t("editor:tools.crop.apply")}
               </button>
               <button
                 className={styles.button}
                 onClick={onCancelCrop}
                 style={{ width: "100%" }}
               >
-                Cancelar
+                {t("common:buttons.cancel")}
               </button>
             </>
           ) : (
-            <p className={styles.cropInfo}>
-              Arrastra sobre la imagen para crear un área de recorte
-            </p>
+            <p className={styles.cropInfo}>{t("editor:tools.crop.hint")}</p>
           )}
         </div>
       )}
@@ -184,13 +188,13 @@ const ToolsPanel: React.FC<Props> = ({
         disabled={!natural}
       >
         <IconResize size={20} />
-        <span>Redimensionar</span>
+        <span>{t("editor:tools.resize.name")}</span>
       </button>
 
       {activeTool === "resize" && natural && (
         <div className={styles.toolOptions}>
           <label className={styles.optionLabel}>
-            Ancho (px):
+            {t("editor:tools.resize.width")}
             <input
               type="number"
               value={newWidth}
@@ -199,7 +203,7 @@ const ToolsPanel: React.FC<Props> = ({
             />
           </label>
           <label className={styles.optionLabel}>
-            Alto (px):
+            {t("editor:tools.resize.height")}
             <input
               type="number"
               value={newHeight}
@@ -213,21 +217,21 @@ const ToolsPanel: React.FC<Props> = ({
               checked={maintainAspect}
               onChange={(e) => onToggleAspect(e.target.checked)}
             />
-            Mantener aspecto
+            {t("editor:tools.resize.maintainAspect")}
           </label>
           <button
             className={`${styles.button} ${styles.primary}`}
             onClick={onApplyResize}
             style={{ width: "100%", marginTop: "0.5rem" }}
           >
-            Aplicar redimensionado
+            {t("editor:tools.resize.apply")}
           </button>
           <button
             className={styles.button}
             onClick={onCancelResize}
             style={{ width: "100%" }}
           >
-            Cancelar
+            {t("common:buttons.cancel")}
           </button>
         </div>
       )}
@@ -243,62 +247,66 @@ const ToolsPanel: React.FC<Props> = ({
         disabled={!natural}
       >
         <IconRotate size={20} />
-        <span>Transformar</span>
+        <span>{t("editor:tools.transform.name")}</span>
       </button>
 
       {activeTool === "transform" && natural && (
         <div className={styles.toolOptions}>
           <div className={styles.transformSection}>
-            <label className={styles.optionLabel}>Rotar:</label>
+            <label className={styles.optionLabel}>
+              {t("editor:tools.transform.rotate")}
+            </label>
             <div className={styles.transformButtons}>
               <button
                 className={`${styles.button} ${styles.transformButton}`}
                 onClick={onRotateMinus90}
-                title="Rotar 90° izquierda"
+                title={t("editor:tools.transform.rotate90Left")}
               >
                 <IconRotateClockwise
                   size={20}
                   style={{ transform: "scaleX(-1)" }}
                 />
-                90° ←
+                {t("editor:tools.transform.rotate90Left")}
               </button>
               <button
                 className={`${styles.button} ${styles.transformButton}`}
                 onClick={onRotate90}
-                title="Rotar 90° derecha"
+                title={t("editor:tools.transform.rotate90Right")}
               >
                 <IconRotateClockwise size={20} />
-                90° →
+                {t("editor:tools.transform.rotate90Right")}
               </button>
               <button
                 className={`${styles.button} ${styles.transformButton}`}
                 onClick={onRotate180}
-                title="Rotar 180°"
+                title={t("editor:tools.transform.rotate180")}
               >
                 <IconRotate size={20} />
-                180°
+                {t("editor:tools.transform.rotate180")}
               </button>
             </div>
           </div>
 
           <div className={styles.transformSection}>
-            <label className={styles.optionLabel}>Voltear:</label>
+            <label className={styles.optionLabel}>
+              {t("editor:tools.transform.flip")}
+            </label>
             <div className={styles.transformButtons}>
               <button
                 className={`${styles.button} ${styles.transformButton}`}
                 onClick={onFlipHorizontal}
-                title="Voltear horizontal"
+                title={t("editor:tools.transform.flipHorizontal")}
               >
                 <IconFlipHorizontal size={20} />
-                Horizontal
+                {t("editor:tools.transform.flipHorizontal")}
               </button>
               <button
                 className={`${styles.button} ${styles.transformButton}`}
                 onClick={onFlipVertical}
-                title="Voltear vertical"
+                title={t("editor:tools.transform.flipVertical")}
               >
                 <IconFlipVertical size={20} />
-                Vertical
+                {t("editor:tools.transform.flipVertical")}
               </button>
             </div>
           </div>
@@ -316,13 +324,14 @@ const ToolsPanel: React.FC<Props> = ({
         disabled={!natural}
       >
         <IconAdjustments size={20} />
-        <span>Ajustes</span>
+        <span>{t("editor:tools.adjustments.name")}</span>
       </button>
 
       {activeTool === "adjustments" && natural && (
         <div className={styles.toolOptions}>
           <label className={styles.optionLabel}>
-            Brillo: {brightness > 0 ? "+" : ""}
+            {t("editor:tools.adjustments.brightness")}{" "}
+            {brightness > 0 ? "+" : ""}
             {brightness}%
             <input
               type="range"
@@ -335,7 +344,7 @@ const ToolsPanel: React.FC<Props> = ({
           </label>
 
           <label className={styles.optionLabel}>
-            Contraste: {contrast > 0 ? "+" : ""}
+            {t("editor:tools.adjustments.contrast")} {contrast > 0 ? "+" : ""}
             {contrast}%
             <input
               type="range"
@@ -348,7 +357,8 @@ const ToolsPanel: React.FC<Props> = ({
           </label>
 
           <label className={styles.optionLabel}>
-            Saturación: {saturation > 0 ? "+" : ""}
+            {t("editor:tools.adjustments.saturation")}{" "}
+            {saturation > 0 ? "+" : ""}
             {saturation}%
             <input
               type="range"
@@ -367,14 +377,14 @@ const ToolsPanel: React.FC<Props> = ({
                 onClick={onApplyAdjustments}
                 style={{ width: "100%", marginTop: "0.5rem" }}
               >
-                Aplicar ajustes
+                {t("editor:tools.adjustments.apply")}
               </button>
               <button
                 className={styles.button}
                 onClick={onCancelAdjustments}
                 style={{ width: "100%" }}
               >
-                Cancelar
+                {t("common:buttons.cancel")}
               </button>
             </>
           )}
@@ -392,7 +402,7 @@ const ToolsPanel: React.FC<Props> = ({
         disabled={!natural}
       >
         <IconFilter size={20} />
-        <span>Filtros</span>
+        <span>{t("editor:tools.filters.name")}</span>
       </button>
 
       {activeTool === "filters" && natural && (
@@ -404,7 +414,7 @@ const ToolsPanel: React.FC<Props> = ({
               }`}
               onClick={() => onSelectFilter("grayscale")}
             >
-              Grises
+              {t("editor:tools.filters.grayscale")}
             </button>
             <button
               className={`${styles.filterButton} ${
@@ -412,7 +422,7 @@ const ToolsPanel: React.FC<Props> = ({
               }`}
               onClick={() => onSelectFilter("sepia")}
             >
-              Sepia
+              {t("editor:tools.filters.sepia")}
             </button>
             <button
               className={`${styles.filterButton} ${
@@ -420,7 +430,7 @@ const ToolsPanel: React.FC<Props> = ({
               }`}
               onClick={() => onSelectFilter("invert")}
             >
-              Invertir
+              {t("editor:tools.filters.invert")}
             </button>
           </div>
 
@@ -431,14 +441,14 @@ const ToolsPanel: React.FC<Props> = ({
                 onClick={onApplyFilter}
                 style={{ width: "100%", marginTop: "1rem" }}
               >
-                Aplicar filtro
+                {t("editor:tools.filters.apply")}
               </button>
               <button
                 className={styles.button}
                 onClick={onCancelFilter}
                 style={{ width: "100%" }}
               >
-                Cancelar
+                {t("common:buttons.cancel")}
               </button>
             </>
           )}
@@ -453,7 +463,7 @@ const ToolsPanel: React.FC<Props> = ({
         onClick={onOpenExportModal}
       >
         <IconDownload size={20} />
-        <span>Descargar</span>
+        <span>{t("common:buttons.download")}</span>
       </button>
     </div>
   );

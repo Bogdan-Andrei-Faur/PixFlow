@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./ExportModal.module.css";
 import { IconX, IconInfoCircle } from "@tabler/icons-react";
 
@@ -25,6 +26,7 @@ const ExportModal: React.FC<ExportModalProps> = ({
   imageRef,
   naturalDims,
 }) => {
+  const { t } = useTranslation(["editor", "common"]);
   const [format, setFormat] = React.useState<"png" | "jpeg" | "webp">("png");
   const [quality, setQuality] = React.useState(0.92);
   const [editableName, setEditableName] = React.useState("");
@@ -121,31 +123,34 @@ const ExportModal: React.FC<ExportModalProps> = ({
 
   const formatInfo = {
     png: {
-      title: "PNG - Portable Network Graphics",
+      title: t("export.formatInfo.png.title"),
       pros: [
-        "Sin pérdida de calidad",
-        "Soporta transparencia",
-        "Ideal para gráficos y capturas",
+        t("export.formatInfo.png.pros.0"),
+        t("export.formatInfo.png.pros.1"),
+        t("export.formatInfo.png.pros.2"),
       ],
-      cons: ["Mayor tamaño de archivo"],
+      cons: [t("export.formatInfo.png.cons.0")],
     },
     jpeg: {
-      title: "JPEG - Joint Photographic Experts Group",
+      title: t("export.formatInfo.jpeg.title"),
       pros: [
-        "Menor tamaño de archivo",
-        "Ideal para fotografías",
-        "Compatible universalmente",
+        t("export.formatInfo.jpeg.pros.0"),
+        t("export.formatInfo.jpeg.pros.1"),
+        t("export.formatInfo.jpeg.pros.2"),
       ],
-      cons: ["Compresión con pérdida", "No soporta transparencia"],
+      cons: [
+        t("export.formatInfo.jpeg.cons.0"),
+        t("export.formatInfo.jpeg.cons.1"),
+      ],
     },
     webp: {
-      title: "WebP - Formato moderno de Google",
+      title: t("export.formatInfo.webp.title"),
       pros: [
-        "Buen balance calidad/tamaño",
-        "Soporta transparencia",
-        "Compresión superior",
+        t("export.formatInfo.webp.pros.0"),
+        t("export.formatInfo.webp.pros.1"),
+        t("export.formatInfo.webp.pros.2"),
       ],
-      cons: ["Menos compatible en apps antiguas"],
+      cons: [t("export.formatInfo.webp.cons.0")],
     },
   };
 
@@ -153,7 +158,7 @@ const ExportModal: React.FC<ExportModalProps> = ({
     <div className={styles.backdrop} onClick={handleBackdropClick}>
       <div className={styles.modal}>
         <div className={styles.header}>
-          <h2 className={styles.title}>Exportar imagen</h2>
+          <h2 className={styles.title}>{t("export.title")}</h2>
           <button className={styles.closeButton} onClick={onClose}>
             <IconX size={20} />
           </button>
@@ -161,7 +166,7 @@ const ExportModal: React.FC<ExportModalProps> = ({
 
         <div className={styles.content}>
           <div className={styles.section}>
-            <label className={styles.label}>Nombre del archivo:</label>
+            <label className={styles.label}>{t("export.fileName")}</label>
             <input
               type="text"
               value={editableName}
@@ -175,7 +180,7 @@ const ExportModal: React.FC<ExportModalProps> = ({
           </div>
 
           <div className={styles.section}>
-            <label className={styles.label}>Formato:</label>
+            <label className={styles.label}>{t("export.format")}</label>
             <div className={styles.radioGroup}>
               {(["png", "jpeg", "webp"] as const).map((fmt) => (
                 <div key={fmt} className={styles.formatOption}>
@@ -194,7 +199,9 @@ const ExportModal: React.FC<ExportModalProps> = ({
                     <div className={styles.tooltipContent}>
                       <strong>{formatInfo[fmt].title}</strong>
                       <div className={styles.tooltipSection}>
-                        <span className={styles.tooltipLabel}>✓ Ventajas:</span>
+                        <span className={styles.tooltipLabel}>
+                          ✓ {t("export.formatInfo.pros")}
+                        </span>
                         <ul>
                           {formatInfo[fmt].pros.map((pro, i) => (
                             <li key={i}>{pro}</li>
@@ -203,7 +210,7 @@ const ExportModal: React.FC<ExportModalProps> = ({
                       </div>
                       <div className={styles.tooltipSection}>
                         <span className={styles.tooltipLabel}>
-                          ✗ Desventajas:
+                          ✗ {t("export.formatInfo.cons")}
                         </span>
                         <ul>
                           {formatInfo[fmt].cons.map((con, i) => (
@@ -220,7 +227,7 @@ const ExportModal: React.FC<ExportModalProps> = ({
 
           <div className={styles.section}>
             <label className={styles.label}>
-              Calidad: {Math.round(quality * 100)}%
+              {t("export.quality")} {Math.round(quality * 100)}%
             </label>
             <input
               type="range"
@@ -234,7 +241,7 @@ const ExportModal: React.FC<ExportModalProps> = ({
             />
             {format === "png" && (
               <div className={styles.qualityHint}>
-                PNG no tiene compresión con pérdida
+                {t("export.qualityHint")}
               </div>
             )}
           </div>
@@ -242,10 +249,14 @@ const ExportModal: React.FC<ExportModalProps> = ({
           <div className={styles.section}>
             <div className={styles.sizeInfo}>
               <div className={styles.sizeRow}>
-                <span className={styles.sizeLabel}>Tamaño estimado:</span>
+                <span className={styles.sizeLabel}>
+                  {t("export.estimatedSize")}
+                </span>
                 <span className={styles.sizeValue}>
                   {isCalculating ? (
-                    <span className={styles.calculating}>Calculando...</span>
+                    <span className={styles.calculating}>
+                      {t("export.calculating")}
+                    </span>
                   ) : estimatedSize ? (
                     formatBytes(estimatedSize)
                   ) : (
@@ -255,7 +266,9 @@ const ExportModal: React.FC<ExportModalProps> = ({
               </div>
               {currentFileSize && estimatedSize && sizeDiff && (
                 <div className={styles.sizeRow}>
-                  <span className={styles.sizeLabel}>Diferencia:</span>
+                  <span className={styles.sizeLabel}>
+                    {t("export.difference")}
+                  </span>
                   <span
                     className={`${styles.sizeValue} ${
                       sizeDiff.diff > 0
@@ -274,14 +287,14 @@ const ExportModal: React.FC<ExportModalProps> = ({
 
         <div className={styles.footer}>
           <button className={styles.cancelButton} onClick={onClose}>
-            Cancelar
+            {t("common:buttons.cancel")}
           </button>
           <button
             className={styles.exportButton}
             onClick={handleExport}
             disabled={!editableName.trim()}
           >
-            Descargar
+            {t("export.download")}
           </button>
         </div>
       </div>

@@ -1,0 +1,15 @@
+{
+  "title": "PixFlow",
+  "upload": {
+    "dragDrop": "Drag an image here",
+    "clickSelect": "or click to select (max {{maxSize}}MB)"
+  },
+  "preview": {
+    "cancel": "Cancel",
+    "edit": "Edit"
+  },
+  "errors": {
+    "invalidType": "Only image files are allowed (PNG, JPG, etc.)",
+    "sizeExceeded": "File size exceeds the limit of {{maxSize}} MB."
+  }
+}

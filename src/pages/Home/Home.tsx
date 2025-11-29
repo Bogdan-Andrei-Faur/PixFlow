@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./Home.module.css";
 import Alert from "../../components/Alert/Alert";
 import ImageUploader from "./components/ImageUploader";
@@ -9,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 const MAX_SIZE_MB = 50;
 
 const Home = () => {
+  const { t } = useTranslation("home");
   const [imageFile, setImageFile] = React.useState<File | null>(null);
   const [previewURL, setPreviewURL] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
@@ -70,7 +72,7 @@ const Home = () => {
   return (
     <div className={`${styles.container} ${styles.background}`}>
       <div className={styles.content}>
-        <h1 className={styles.title}>PixFlow</h1>
+        <h1 className={styles.title}>{t("title")}</h1>
 
         {previewURL && !error ? (
           <ImagePreview

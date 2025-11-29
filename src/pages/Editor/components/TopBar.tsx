@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styles from "../Editor.module.css";
 import {
   IconEdit,
@@ -10,6 +11,7 @@ import {
   IconArrowForwardUp,
   IconPhotoUp,
 } from "@tabler/icons-react";
+import LanguageSelector from "../../../components/LanguageSelector/LanguageSelector";
 
 interface Props {
   fileName?: string;
@@ -38,6 +40,8 @@ const TopBar: React.FC<Props> = ({
   canRedo = false,
   onLoadNewImage,
 }) => {
+  const { t } = useTranslation(["editor", "common"]);
+
   const formatBytes = (bytes: number) => {
     if (bytes === 0) return "0 B";
     const k = 1024;
@@ -49,12 +53,12 @@ const TopBar: React.FC<Props> = ({
   return (
     <div className={styles.topBar}>
       <h1 className={styles.title}>
-        Editor PixFlow <IconEdit size={24} />
+        {t("editor:title")} <IconEdit size={24} />
       </h1>
       <span className={styles.metaInfo}>
         {fileName
           ? `${fileName} • ${formatBytes(fileSize || 0)}`
-          : "Sin imagen"}
+          : t("editor:noImage.title")}
       </span>
       <div className={styles.spacer} />
 
@@ -62,7 +66,7 @@ const TopBar: React.FC<Props> = ({
       <button
         className={`${styles.button} ${styles.iconButton}`}
         onClick={onUndo}
-        aria-label="Deshacer"
+        aria-label={t("common:actions.undo")}
         disabled={!canUndo}
       >
         <IconArrowBackUp size={16} />
@@ -70,7 +74,7 @@ const TopBar: React.FC<Props> = ({
       <button
         className={`${styles.button} ${styles.iconButton}`}
         onClick={onRedo}
-        aria-label="Rehacer"
+        aria-label={t("common:actions.redo")}
         disabled={!canRedo}
       >
         <IconArrowForwardUp size={16} />
@@ -79,13 +83,13 @@ const TopBar: React.FC<Props> = ({
         <button
           className={styles.button}
           onClick={onLoadNewImage}
-          aria-label="Cargar nueva imagen"
+          aria-label={t("common:actions.loadImage")}
         >
-          <IconPhotoUp size={16} /> Nueva
+          <IconPhotoUp size={16} /> {t("common:buttons.new")}
         </button>
       )}
       <button className={styles.button} onClick={onReset}>
-        <IconRestore size={16} /> Reset
+        <IconRestore size={16} /> {t("common:buttons.reset")}
       </button>
 
       {/* Separador visual */}
@@ -99,15 +103,16 @@ const TopBar: React.FC<Props> = ({
       />
 
       {/* Utilidades */}
+      <LanguageSelector />
       <button
         className={`${styles.button} ${styles.iconButton}`}
         onClick={onToggleTheme}
-        aria-label="Cambiar tema"
+        aria-label={t("common:theme.toggle")}
       >
         {theme === "dark" ? <IconMoon size={16} /> : <IconSun size={16} />}
       </button>
       <button className={`${styles.button} ${styles.primary}`} onClick={onExit}>
-        <IconLogout size={16} /> Salir
+        <IconLogout size={16} /> {t("common:buttons.exit")}
       </button>
     </div>
   );

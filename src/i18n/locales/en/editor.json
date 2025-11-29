@@ -1,0 +1,104 @@
+{
+  "title": "PixFlow Editor",
+  "noImage": {
+    "title": "No image loaded",
+    "description": "The image was lost when the page was refreshed.\nPlease load an image to continue editing.",
+    "button": "Load image"
+  },
+  "tools": {
+    "title": "Tools",
+    "crop": {
+      "name": "Crop",
+      "info": "{{width}} × {{height}} px",
+      "hint": "Drag over the image to create a crop area",
+      "apply": "Apply crop"
+    },
+    "resize": {
+      "name": "Resize",
+      "width": "Width (px):",
+      "height": "Height (px):",
+      "maintainAspect": "Lock aspect ratio",
+      "apply": "Apply resize"
+    },
+    "transform": {
+      "name": "Transform",
+      "rotate": "Rotate:",
+      "rotate90Left": "90° ←",
+      "rotate90Right": "90° →",
+      "rotate180": "180°",
+      "flip": "Flip:",
+      "flipHorizontal": "Horizontal",
+      "flipVertical": "Vertical"
+    },
+    "adjustments": {
+      "name": "Adjustments",
+      "brightness": "Brightness:",
+      "contrast": "Contrast:",
+      "saturation": "Saturation:",
+      "apply": "Apply adjustments"
+    },
+    "filters": {
+      "name": "Filters",
+      "grayscale": "Grayscale",
+      "sepia": "Sepia",
+      "invert": "Invert",
+      "apply": "Apply filter"
+    }
+  },
+  "zoom": {
+    "fit": "Fit",
+    "oneToOne": "1:1",
+    "in": "Zoom in",
+    "out": "Zoom out"
+  },
+  "export": {
+    "title": "Export image",
+    "fileName": "File name:",
+    "format": "Format:",
+    "quality": "Quality:",
+    "qualityHint": "PNG has no lossy compression",
+    "estimatedSize": "Estimated size:",
+    "difference": "Difference:",
+    "calculating": "Calculating...",
+    "download": "Download",
+    "formatInfo": {
+      "pros": "Advantages:",
+      "cons": "Disadvantages:",
+      "png": {
+        "title": "PNG - Portable Network Graphics",
+        "pros": [
+          "Lossless quality",
+          "Supports transparency",
+          "Ideal for graphics and screenshots"
+        ],
+        "cons": ["Larger file size"]
+      },
+      "jpeg": {
+        "title": "JPEG - Joint Photographic Experts Group",
+        "pros": [
+          "Smaller file size",
+          "Ideal for photographs",
+          "Universally compatible"
+        ],
+        "cons": ["Lossy compression", "No transparency support"]
+      },
+      "webp": {
+        "title": "WebP - Modern Google format",
+        "pros": [
+          "Good quality/size balance",
+          "Supports transparency",
+          "Superior compression"
+        ],
+        "cons": ["Less compatible with older apps"]
+      }
+    }
+  },
+  "alert": {
+    "title": "Error"
+  },
+  "notFound": {
+    "title": "404",
+    "subtitle": "Page not found",
+    "description": "Sorry, the page you are looking for does not exist or has been moved."
+  }
+}

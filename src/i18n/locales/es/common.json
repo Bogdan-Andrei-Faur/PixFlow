@@ -1,0 +1,26 @@
+{
+  "appName": "PixFlow",
+  "buttons": {
+    "cancel": "Cancelar",
+    "apply": "Aplicar",
+    "download": "Descargar",
+    "exit": "Salir",
+    "reset": "Reset",
+    "new": "Nueva",
+    "back": "Volver al inicio"
+  },
+  "units": {
+    "px": "px",
+    "percent": "%"
+  },
+  "theme": {
+    "dark": "Oscuro",
+    "light": "Claro",
+    "toggle": "Cambiar tema"
+  },
+  "actions": {
+    "undo": "Deshacer",
+    "redo": "Rehacer",
+    "loadImage": "Cargar nueva imagen"
+  }
+}

@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./ImagePreview.module.css";
 
 interface ImagePreviewProps {
@@ -12,6 +13,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
   onCancel,
   onEdit,
 }) => {
+  const { t } = useTranslation("home");
   return (
     <>
       <div className={styles.previewContainer}>
@@ -22,13 +24,13 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
           className={`${styles.button} ${styles.cancelButton}`}
           onClick={onCancel}
         >
-          Cancelar
+          {t("preview.cancel")}
         </button>
         <button
           className={`${styles.button} ${styles.editButton}`}
           onClick={onEdit}
         >
-          Editar
+          {t("preview.edit")}
         </button>
       </div>
     </>

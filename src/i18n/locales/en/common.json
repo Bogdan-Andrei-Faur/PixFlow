@@ -1,0 +1,26 @@
+{
+  "appName": "PixFlow",
+  "buttons": {
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "download": "Download",
+    "exit": "Exit",
+    "reset": "Reset",
+    "new": "New",
+    "back": "Back to home"
+  },
+  "units": {
+    "px": "px",
+    "percent": "%"
+  },
+  "theme": {
+    "dark": "Dark",
+    "light": "Light",
+    "toggle": "Toggle theme"
+  },
+  "actions": {
+    "undo": "Undo",
+    "redo": "Redo",
+    "loadImage": "Load new image"
+  }
+}

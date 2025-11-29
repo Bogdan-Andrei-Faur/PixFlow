@@ -1,0 +1,15 @@
+{
+  "title": "PixFlow",
+  "upload": {
+    "dragDrop": "Arrastra una imagen aquí",
+    "clickSelect": "o haz clic para seleccionar (máx. {{maxSize}}MB)"
+  },
+  "preview": {
+    "cancel": "Cancelar",
+    "edit": "Editar"
+  },
+  "errors": {
+    "invalidType": "Solo se permiten archivos de imagen (PNG, JPG, etc.)",
+    "sizeExceeded": "El tamaño del archivo excede el límite de {{maxSize}} MB."
+  }
+}
