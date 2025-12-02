@@ -23,8 +23,8 @@
     "transform": {
       "name": "Transformar",
       "rotate": "Rotar:",
-      "rotate90Left": "90° ←",
-      "rotate90Right": "90° →",
+      "rotate90Left": "90°",
+      "rotate90Right": "90°",
       "rotate180": "180°",
       "flip": "Voltear:",
       "flipHorizontal": "Horizontal",

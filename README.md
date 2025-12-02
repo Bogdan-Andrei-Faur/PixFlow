@@ -10,9 +10,19 @@
 
 ## ✨ Características
 
+### 📱 Progressive Web App (PWA)
+
+- **💾 Instalable** - Añade a pantalla de inicio en iOS/Android
+- **⚡ Offline** - Funciona sin conexión gracias al Service Worker
+- **📲 Gestos táctiles** - Pinch-to-zoom, pan con un dedo
+- **🎯 Optimizado para móvil** - Interfaz touch-friendly, botones de 44px mínimo
+- **🖼️ Optimización automática** - Redimensiona imágenes grandes en dispositivos móviles
+  - Móvil: máx. 1024×1024px, 2MB, JPEG 75%
+  - Desktop: máx. 4096×4096px, 15MB, JPEG 92%
+
 ### Herramientas de Edición
 
-- **✂️ Recorte** - Selección libre con vista previa en tiempo real
+- **✂️ Recorte** - Selección libre con vista previa en tiempo real (optimizado para iOS)
 - **📏 Redimensionar** - Ajuste de dimensiones con bloqueo de aspecto
 - **🔄 Transformar** - Rotación (90°, -90°, 180°) y volteo (H/V)
 - **🎨 Ajustes** - Brillo, contraste y saturación con sliders
@@ -21,18 +31,25 @@
 ### Funcionalidades
 
 - **⏪ Deshacer/Rehacer** - Historial completo de cambios con snapshots
-- **🔍 Zoom y Pan** - Control preciso con rueda del ratón y atajos
+- **🔍 Zoom y Pan** - Control preciso con rueda del ratón, pinch-to-zoom en móvil
 - **💾 Exportación** - PNG, JPEG, WebP con ajuste de calidad
-- **📱 Responsive** - Diseño adaptable a cualquier pantalla
+- **📱 Responsive** - Diseño adaptable con drawer móvil
 - **🌙 Tema oscuro/claro** - Cambio visual con patrón de transparencia
 
-### Atajos de Teclado
+### Atajos de Teclado (Desktop)
 
 - `Cmd/Ctrl + Z` - Deshacer
 - `Cmd/Ctrl + Shift + Z` - Rehacer
 - `Cmd/Ctrl + +` - Aumentar zoom
 - `Cmd/Ctrl + -` - Reducir zoom
 - `Cmd/Ctrl + 0` - Ajustar a pantalla
+
+### Gestos Táctiles (Móvil)
+
+- **Pinch** - Zoom in/out con dos dedos
+- **Pan** - Mover imagen con un dedo
+- **Tap** - Seleccionar herramientas y botones
+- **Botones 44px** - Todos los controles táctiles cumplen guidelines de iOS/Android
 
 ## 🚀 Instalación
 
@@ -57,6 +74,32 @@ npm run dev
 
 El editor estará disponible en `http://localhost:5173`
 
+## 📲 Instalar como PWA
+
+### iOS (Safari)
+
+1. Abre https://pixflow.andreifaur.dev en Safari
+2. Toca el botón "Compartir" (cuadrado con flecha hacia arriba)
+3. Desplázate y toca "Añadir a pantalla de inicio"
+4. Personaliza el nombre si lo deseas y toca "Añadir"
+5. ¡Listo! Ahora puedes abrir PixFlow como una app nativa
+
+### Android (Chrome)
+
+1. Abre https://pixflow.andreifaur.dev en Chrome
+2. Toca el menú (⋮) y selecciona "Añadir a pantalla de inicio"
+3. Confirma en el diálogo que aparece
+4. La app se instalará en tu launcher
+
+### Desktop (Chrome/Edge)
+
+1. Abre https://pixflow.andreifaur.dev
+2. Mira el icono de instalación en la barra de direcciones
+3. Haz clic en "Instalar"
+4. La app se abrirá en su propia ventana
+
+**Beneficios**: Funciona offline, carga más rápido, interfaz nativa sin pestañas del navegador.
+
 ## 📦 Tecnologías
 
 | Categoría    | Tecnologías                  |
@@ -64,10 +107,22 @@ El editor estará disponible en `http://localhost:5173`
 | **Frontend** | React 19.2, TypeScript 5.9   |
 | **Build**    | Vite 7.2                     |
 | **Routing**  | React Router 7.9             |
+| **PWA**      | Service Worker, Web Manifest |
 | **Edición**  | Canvas API, react-image-crop |
 | **Estilos**  | CSS Modules                  |
 | **Iconos**   | Tabler Icons React           |
 | **Deploy**   | GitHub Pages, GitHub Actions |
+
+## 🌐 Compatibilidad de Navegadores
+
+| Navegador       | Versión Mínima | Características                    |
+| --------------- | -------------- | ---------------------------------- |
+| Chrome/Edge     | 90+            | ✅ Todas (PWA, offline, gestos)    |
+| Safari (iOS)    | 15.4+          | ✅ Todas (optimizaciones especiales) |
+| Firefox         | 88+            | ✅ Todas (sin instalación PWA)     |
+| Samsung Internet| 14+            | ✅ Todas                           |
+
+**Nota**: Las imágenes se optimizan automáticamente en dispositivos móviles para prevenir crashes por memoria.
 
 ## 🏗️ Arquitectura
 

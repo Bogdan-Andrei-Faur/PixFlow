@@ -52,3 +52,26 @@
   margin-bottom: 3rem;
   color: rgba(255, 255, 255, 0.8);
 }
+
+/* Responsive Design - Mobile */
+@media (max-width: 768px) {
+  .title {
+    font-size: 2.5rem;
+    line-height: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .content {
+    padding: 0 1rem;
+    width: 100%;
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 2rem;
+    line-height: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+}

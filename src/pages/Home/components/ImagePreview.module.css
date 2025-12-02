@@ -62,3 +62,38 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
+
+/* Responsive Design - Mobile */
+@media (max-width: 768px) {
+  .previewContainer {
+    width: 100%;
+    max-width: 450px;
+    height: 250px;
+    padding: 1rem;
+  }
+
+  .button {
+    padding: 0.65rem 1.5rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .previewContainer {
+    height: 200px;
+    padding: 0.75rem;
+  }
+
+  .buttonContainer {
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .button {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+}

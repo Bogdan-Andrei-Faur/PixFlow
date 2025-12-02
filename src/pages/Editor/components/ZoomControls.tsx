@@ -34,6 +34,9 @@ const ZoomControls: React.FC<Props> = ({
       onPointerMove={(e) => e.stopPropagation()}
       onPointerUp={(e) => e.stopPropagation()}
       onWheel={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
+      onTouchMove={(e) => e.stopPropagation()}
+      onTouchEnd={(e) => e.stopPropagation()}
     >
       <button
         className={`${styles.button} ${styles.iconButton}`}
@@ -46,7 +49,7 @@ const ZoomControls: React.FC<Props> = ({
       <input
         className={styles.range}
         type="range"
-        min={0.1}
+        min={0.01}
         max={4}
         step={0.01}
         value={zoom}

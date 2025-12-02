@@ -34,6 +34,11 @@
   opacity: 1;
 }
 
+.processing {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
 .fileInput {
   position: absolute;
   width: 100%;
@@ -65,4 +70,45 @@
   font-size: 0.875rem;
   opacity: 0.7;
   margin: 0;
+}
+
+/* Responsive Design - Mobile */
+@media (max-width: 768px) {
+  .dropZone {
+    width: 100%;
+    max-width: 450px;
+    height: 250px;
+    padding: 1rem;
+  }
+
+  .uploadIcon {
+    font-size: 2.5rem;
+  }
+
+  .dropZoneText {
+    font-size: 1rem;
+  }
+
+  .dropZoneSubtext {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dropZone {
+    height: 200px;
+    padding: 0.75rem;
+  }
+
+  .uploadIcon {
+    font-size: 2rem;
+  }
+
+  .dropZoneText {
+    font-size: 0.95rem;
+  }
+
+  .dropZoneSubtext {
+    font-size: 0.75rem;
+  }
 }

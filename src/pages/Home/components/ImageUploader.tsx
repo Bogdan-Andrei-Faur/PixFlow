@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styles from "./ImageUploader.module.css";
+import { optimizeImageForDevice } from "../../../utils/imageOptimization";
 
 interface ImageUploaderProps {
   onImageSelect: (file: File) => void;
@@ -15,9 +16,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 }) => {
   const { t } = useTranslation("home");
   const [isDragActive, setIsDragActive] = React.useState(false);
+  const [isProcessing, setIsProcessing] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement | null>(null);
 
-  const validateAndSetFile = (file: File | null) => {
+  const validateAndSetFile = async (file: File | null) => {
     if (!file) {
       return;
     }
@@ -28,14 +30,26 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       return;
     }
 
-    // Validar tamaño del archivo
-    const maxSizeBytes = maxSizeMB * 1024 * 1024;
-    if (file.size > maxSizeBytes) {
-      onError(t("errors.sizeExceeded", { maxSize: maxSizeMB }));
-      return;
-    }
+    setIsProcessing(true);
 
-    onImageSelect(file);
+    try {
+      // Optimizar imagen para el dispositivo (móvil o desktop)
+      const optimizedFile = await optimizeImageForDevice(file);
+
+      // Validar tamaño después de optimización
+      const maxSizeBytes = maxSizeMB * 1024 * 1024;
+      if (optimizedFile.size > maxSizeBytes) {
+        onError(t("errors.sizeExceeded", { maxSize: maxSizeMB }));
+        setIsProcessing(false);
+        return;
+      }
+
+      onImageSelect(optimizedFile);
+    } catch (error) {
+      onError("Error al procesar la imagen");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +84,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
   return (
     <div
-      className={`${styles.dropZone} ${isDragActive ? styles.dragActive : ""}`}
+      className={`${styles.dropZone} ${isDragActive ? styles.dragActive : ""} ${
+        isProcessing ? styles.processing : ""
+      }`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -85,13 +101,23 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           // Asegura que seleccionar el mismo archivo dispare onChange
           if (inputRef.current) inputRef.current.value = "";
         }}
+        disabled={isProcessing}
       />
       <div className={styles.dropZoneContent}>
-        <div className={styles.uploadIcon}>📁</div>
-        <p className={styles.dropZoneText}>{t("upload.dragDrop")}</p>
-        <p className={styles.dropZoneSubtext}>
-          {t("upload.clickSelect", { maxSize: maxSizeMB })}
-        </p>
+        {isProcessing ? (
+          <>
+            <div className={styles.uploadIcon}>⏳</div>
+            <p className={styles.dropZoneText}>Optimizando imagen...</p>
+          </>
+        ) : (
+          <>
+            <div className={styles.uploadIcon}>📁</div>
+            <p className={styles.dropZoneText}>{t("upload.dragDrop")}</p>
+            <p className={styles.dropZoneSubtext}>
+              {t("upload.clickSelect", { maxSize: maxSizeMB })}
+            </p>
+          </>
+        )}
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ import cropStyles from "./components/ReactCropContainer.module.css";
 import ZoomControls from "./components/ZoomControls";
 import TopBar from "./components/TopBar";
 import ToolsPanel from "./components/ToolsPanel";
+import type { Tool } from "./components/ToolsPanel/types";
 import ExportModal from "./components/ExportModal";
 import { clamp } from "./utils/number";
 import { useZoomPan } from "./hooks/useZoomPan";
@@ -36,10 +37,24 @@ const Editor: React.FC = () => {
     null
   );
   const [theme, setTheme] = React.useState<"dark" | "light">("dark");
-  const [activeTool, setActiveTool] = React.useState<
-    "none" | "crop" | "resize" | "transform" | "adjustments" | "filters"
-  >("none");
+  const [activeTool, setActiveTool] = React.useState<Tool>("none");
   const [isExportModalOpen, setIsExportModalOpen] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+
+  // Manejo global de errores de memoria
+  React.useEffect(() => {
+    const handleError = (e: ErrorEvent) => {
+      if (e.message.includes("memory") || e.message.includes("allocation")) {
+        setErrorMessage(
+          "Imagen demasiado grande. Intenta con una imagen más pequeña."
+        );
+        setActiveTool("none");
+      }
+    };
+
+    window.addEventListener("error", handleError);
+    return () => window.removeEventListener("error", handleError);
+  }, []);
 
   // Zoom y Pan
   const {
@@ -48,6 +63,9 @@ const Editor: React.FC = () => {
     offset,
     setOffset,
     handleWheel,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
     fitToScreen,
     setOneToOne,
   } = useZoomPan(natural, viewportRef);
@@ -220,6 +238,40 @@ const Editor: React.FC = () => {
         onChange={handleFileSelect}
         style={{ display: "none" }}
       />
+      {errorMessage && (
+        <div
+          style={{
+            position: "fixed",
+            top: "20px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            backgroundColor: "#ef4444",
+            color: "white",
+            padding: "12px 24px",
+            borderRadius: "8px",
+            zIndex: 1000,
+            maxWidth: "90%",
+            textAlign: "center",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          {errorMessage}
+          <button
+            onClick={() => setErrorMessage(null)}
+            style={{
+              marginLeft: "12px",
+              background: "none",
+              border: "none",
+              color: "white",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: "bold",
+            }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
       <TopBar
         fileName={file?.name}
         fileSize={file?.size}
@@ -249,7 +301,7 @@ const Editor: React.FC = () => {
               : null
           }
           natural={natural}
-          onInitCropIfNeeded={() => {}}
+          onInitCropIfNeeded={cropTool.initializeCrop}
           onApplyCrop={cropTool.applyCrop}
           onCancelCrop={() => {
             cropTool.cancelCrop();
@@ -280,8 +332,8 @@ const Editor: React.FC = () => {
           onChangeBrightness={adjustmentsTool.setBrightness}
           onChangeContrast={adjustmentsTool.setContrast}
           onChangeSaturation={adjustmentsTool.setSaturation}
-          onApplyAdjustments={() => {
-            adjustmentsTool.applyAdjustments();
+          onApplyAdjustments={async () => {
+            await adjustmentsTool.applyAdjustments();
             setActiveTool("none");
           }}
           onCancelAdjustments={() => {
@@ -291,8 +343,8 @@ const Editor: React.FC = () => {
           hasAdjustmentChanges={adjustmentsTool.hasChanges}
           activeFilter={quickFilters.activeFilter}
           onSelectFilter={quickFilters.selectFilter}
-          onApplyFilter={() => {
-            quickFilters.applyFilter();
+          onApplyFilter={async () => {
+            await quickFilters.applyFilter();
             setActiveTool("none");
           }}
           onCancelFilter={() => {
@@ -371,6 +423,9 @@ const Editor: React.FC = () => {
               onPointerUp={panDrag.endDrag}
               onPointerLeave={panDrag.endDrag}
               onWheel={handleWheel}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
             >
               <img
                 ref={imgRef}
@@ -412,7 +467,7 @@ const Editor: React.FC = () => {
                       cropTool.setCompletedCrop(pixelCrop);
                       cropTool.setCompletedPercentCrop(percentCrop);
                     }}
-                    ruleOfThirds
+                    ruleOfThirds={window.innerWidth > 768}
                   >
                     <img
                       src={objectURL}
@@ -432,13 +487,13 @@ const Editor: React.FC = () => {
                 zoom={zoom}
                 onZoomOut={() =>
                   setZoom((z) =>
-                    clamp(parseFloat((z / 1.1).toFixed(3)), 0.1, 4)
+                    clamp(parseFloat((z / 1.1).toFixed(3)), 0.01, 4)
                   )
                 }
                 onSlider={(v) => setZoom(v)}
                 onZoomIn={() =>
                   setZoom((z) =>
-                    clamp(parseFloat((z * 1.1).toFixed(3)), 0.1, 4)
+                    clamp(parseFloat((z * 1.1).toFixed(3)), 0.01, 4)
                   )
                 }
                 onFit={fitToScreen}
