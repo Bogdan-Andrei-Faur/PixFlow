@@ -45,7 +45,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       }
 
       onImageSelect(optimizedFile);
-    } catch (error) {
+    } catch {
       onError("Error al procesar la imagen");
     } finally {
       setIsProcessing(false);

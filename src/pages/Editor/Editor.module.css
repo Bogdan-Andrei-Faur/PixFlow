@@ -741,6 +741,9 @@
   flex: 1;
   overflow: hidden;
   background: #1f1f1f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .viewport {
@@ -1058,5 +1061,61 @@
     flex: 1;
     min-width: 60px;
     height: 44px; /* Más alto para touch */
+  }
+}
+
+/* Optimizaciones adicionales para móvil con nueva interfaz */
+@media (max-width: 768px) {
+  /* Ocultar topBar desktop */
+  .topBar {
+    display: none;
+  }
+
+  /* Canvas ocupa todo el espacio disponible */
+  .canvasWrapper {
+    height: calc(100dvh - 56px - 100px); /* Resta MobileTopBar y BottomSheet */
+    min-height: 200px;
+  }
+
+  /* Cuando BottomSheet está expandido - deja espacio mínimo */
+  .canvasWrapper:has(~ div[class*="expanded"]) {
+    flex: 1;
+    min-height: 30vh;
+  }
+
+  /* Animación suave de entrada */
+  @keyframes slideInUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .mainContent {
+    animation: slideInUp 0.3s ease-out;
+  }
+
+  /* Mejorar tap highlights */
+  * {
+    -webkit-tap-highlight-color: rgba(79, 70, 229, 0.1);
+  }
+
+  /* Prevenir zoom accidental en inputs */
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  select {
+    font-size: 16px; /* iOS no hace zoom si es >= 16px */
+  }
+}
+
+/* Landscape mode en móviles */
+@media (max-width: 768px) and (orientation: landscape) {
+  .canvasWrapper {
+    height: calc(100dvh - 50px - 80px);
   }
 }

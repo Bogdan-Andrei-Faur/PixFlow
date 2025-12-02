@@ -22,6 +22,10 @@ export function useZoomPan(
   const isPanningRef = React.useRef(false);
   const lastTouchRef = React.useRef<{ x: number; y: number } | null>(null);
 
+  // Estado para double-tap
+  const lastTapRef = React.useRef<number>(0);
+  const [isZoomedIn, setIsZoomedIn] = React.useState(false);
+
   // Calcular distancia entre dos puntos táctiles
   const getTouchDistance = React.useCallback(
     (touches: React.TouchList): number => {
@@ -43,6 +47,33 @@ export function useZoomPan(
     };
   }, []);
 
+  const handleWheel = React.useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    if (e.ctrlKey) {
+      const factor = 1 - e.deltaY * 0.0015;
+      setZoom((z) => clamp(parseFloat((z * factor).toFixed(3)), 0.01, 8));
+    } else {
+      setOffset((o) => ({ x: o.x + e.deltaX, y: o.y + e.deltaY }));
+    }
+  }, []);
+
+  const fitToScreen = React.useCallback(() => {
+    if (!natural || !viewportRef.current) return;
+    const vw = viewportRef.current.clientWidth;
+    const vh = viewportRef.current.clientHeight;
+    // Usar 0.9 en móvil para dar más margen, 0.98 en desktop
+    const isMobile = window.innerWidth <= 768;
+    const padding = isMobile ? 0.9 : 0.98;
+    const scale = Math.min(vw / natural.w, vh / natural.h) * padding;
+    setZoom(clamp(scale, 0.01, 8));
+    setOffset({ x: 0, y: 0 });
+  }, [natural, viewportRef]);
+
+  const setOneToOne = React.useCallback(() => {
+    setZoom(1);
+    setOffset({ x: 0, y: 0 });
+  }, []);
+
   // Touch start - detectar pinch o pan
   const handleTouchStart = React.useCallback(
     (e: React.TouchEvent) => {
@@ -58,16 +89,35 @@ export function useZoomPan(
         };
         isPanningRef.current = false;
       } else if (e.touches.length === 1) {
-        // Pan con un dedo
-        lastTouchRef.current = {
-          x: e.touches[0].clientX,
-          y: e.touches[0].clientY,
-        };
-        isPanningRef.current = true;
-        touchStateRef.current = null;
+        // Detectar double-tap
+        const now = Date.now();
+        const timeSinceLastTap = now - lastTapRef.current;
+
+        if (timeSinceLastTap < 300 && timeSinceLastTap > 0) {
+          // Double-tap detectado
+          e.preventDefault();
+          if (isZoomedIn) {
+            fitToScreen();
+            setIsZoomedIn(false);
+          } else {
+            setZoom(2);
+            setOffset({ x: 0, y: 0 });
+            setIsZoomedIn(true);
+          }
+          lastTapRef.current = 0;
+        } else {
+          // Primer tap o tap simple - preparar para pan
+          lastTapRef.current = now;
+          lastTouchRef.current = {
+            x: e.touches[0].clientX,
+            y: e.touches[0].clientY,
+          };
+          isPanningRef.current = true;
+          touchStateRef.current = null;
+        }
       }
     },
-    [getTouchDistance, getTouchCenter]
+    [getTouchDistance, getTouchCenter, isZoomedIn, fitToScreen]
   );
 
   // Touch move - aplicar pinch o pan
@@ -114,33 +164,6 @@ export function useZoomPan(
     touchStateRef.current = null;
     isPanningRef.current = false;
     lastTouchRef.current = null;
-  }, []);
-
-  const handleWheel = React.useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
-    if (e.ctrlKey) {
-      const factor = 1 - e.deltaY * 0.0015;
-      setZoom((z) => clamp(parseFloat((z * factor).toFixed(3)), 0.01, 8));
-    } else {
-      setOffset((o) => ({ x: o.x + e.deltaX, y: o.y + e.deltaY }));
-    }
-  }, []);
-
-  const fitToScreen = React.useCallback(() => {
-    if (!natural || !viewportRef.current) return;
-    const vw = viewportRef.current.clientWidth;
-    const vh = viewportRef.current.clientHeight;
-    // Usar 0.9 en móvil para dar más margen, 0.98 en desktop
-    const isMobile = window.innerWidth <= 768;
-    const padding = isMobile ? 0.9 : 0.98;
-    const scale = Math.min(vw / natural.w, vh / natural.h) * padding;
-    setZoom(clamp(scale, 0.01, 8));
-    setOffset({ x: 0, y: 0 });
-  }, [natural, viewportRef]);
-
-  const setOneToOne = React.useCallback(() => {
-    setZoom(1);
-    setOffset({ x: 0, y: 0 });
   }, []);
 
   return {

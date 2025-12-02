@@ -14,7 +14,12 @@
 
 - **💾 Instalable** - Añade a pantalla de inicio en iOS/Android
 - **⚡ Offline** - Funciona sin conexión gracias al Service Worker
-- **📲 Gestos táctiles** - Pinch-to-zoom, pan con un dedo
+- **📲 Interfaz móvil nativa** (v2.1.0)
+  - MobileTopBar con menú hamburguesa y botón aplicar contextual
+  - MenuDrawer lateral deslizable con todas las opciones
+  - BottomSheet expandible/colapsable para herramientas
+  - ZoomIndicator temporal (2s) al hacer zoom
+- **📲 Gestos táctiles** - Pinch-to-zoom, pan con un dedo, double-tap para zoom
 - **🎯 Optimizado para móvil** - Interfaz touch-friendly, botones de 44px mínimo
 - **🖼️ Optimización automática** - Redimensiona imágenes grandes en dispositivos móviles
   - Móvil: máx. 1024×1024px, 2MB, JPEG 75%
@@ -46,10 +51,22 @@
 
 ### Gestos Táctiles (Móvil)
 
-- **Pinch** - Zoom in/out con dos dedos
-- **Pan** - Mover imagen con un dedo
+- **Pinch** - Zoom in/out con dos dedos (0.01× - 8×)
+- **Pan** - Mover imagen con un dedo (desactivado durante crop)
+- **Double-tap** - Alternar entre zoom 2× y fit-to-screen
+- **Swipe** - En BottomSheet para expandir/contraer herramientas
 - **Tap** - Seleccionar herramientas y botones
 - **Botones 44px** - Todos los controles táctiles cumplen guidelines de iOS/Android
+
+### Interfaz Móvil (v2.1.0)
+
+- **MobileTopBar** - Menú (izq), título (centro), aplicar (der)
+- **MenuDrawer** - Drawer lateral con undo/redo, tema, idioma, salir
+- **BottomSheet** - Panel inferior expandible con 5 herramientas + descarga
+- **MobileToolControls** - Controles específicos por herramienta
+- **ZoomIndicator** - Indicador temporal de zoom (2s)
+- **Auto-init crop** - Área de recorte inicializada al 100% automáticamente
+- **Gestos exclusivos** - Pan/zoom desactivados durante crop para evitar conflictos
 
 ## 🚀 Instalación
 

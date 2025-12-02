@@ -1,0 +1,85 @@
+.mobileTopBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  min-height: 56px;
+  position: relative;
+  z-index: 100;
+}
+
+.titleSection {
+  flex: 1;
+  text-align: center;
+  margin: 0 0.5rem;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  color: var(--text-primary);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.iconButton {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.iconButton:hover {
+  background: var(--bg-hover);
+}
+
+.iconButton:active {
+  background: var(--bg-active);
+  transform: scale(0.95);
+}
+
+.applyButton {
+  background: var(--primary-color);
+  color: white;
+}
+
+.applyButton:hover {
+  background: var(--primary-hover);
+}
+
+.applyButton:active {
+  background: var(--primary-active);
+}
+
+/* Dark theme ya definido en Editor.module.css, pero si necesitas override: */
+@media (prefers-color-scheme: dark) {
+  .mobileTopBar {
+    --bg-secondary: #1a1a1a;
+    --border-color: #333;
+    --text-primary: #f5f5f5;
+    --bg-hover: rgba(255, 255, 255, 0.05);
+    --bg-active: rgba(255, 255, 255, 0.1);
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --primary-active: #3730a3;
+  }
+}

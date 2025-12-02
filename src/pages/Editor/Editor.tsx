@@ -7,8 +7,19 @@ import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import cropStyles from "./components/ReactCropContainer.module.css";
 import ZoomControls from "./components/ZoomControls";
+import ZoomIndicator from "./components/ZoomIndicator";
 import TopBar from "./components/TopBar";
+import MobileTopBar from "./components/MobileTopBar";
+import MenuDrawer from "./components/MenuDrawer";
+import BottomSheet from "./components/BottomSheet";
 import ToolsPanel from "./components/ToolsPanel";
+import {
+  MobileCropControls,
+  MobileResizeControls,
+  MobileTransformControls,
+  MobileAdjustmentsControls,
+  MobileFilterControls,
+} from "./components/MobileToolControls";
 import type { Tool } from "./components/ToolsPanel/types";
 import ExportModal from "./components/ExportModal";
 import { clamp } from "./utils/number";
@@ -40,6 +51,10 @@ const Editor: React.FC = () => {
   const [activeTool, setActiveTool] = React.useState<Tool>("none");
   const [isExportModalOpen, setIsExportModalOpen] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [showZoomIndicator, setShowZoomIndicator] = React.useState(false);
+  const zoomIndicatorTimerRef = React.useRef<number | null>(null);
 
   // Manejo global de errores de memoria
   React.useEffect(() => {
@@ -56,6 +71,16 @@ const Editor: React.FC = () => {
     return () => window.removeEventListener("error", handleError);
   }, []);
 
+  // Detectar cambios de tamaño de ventana para responsive
+  React.useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // Zoom y Pan
   const {
     zoom,
@@ -69,6 +94,27 @@ const Editor: React.FC = () => {
     fitToScreen,
     setOneToOne,
   } = useZoomPan(natural, viewportRef);
+
+  // Mostrar indicador de zoom cuando cambia (móvil)
+  React.useEffect(() => {
+    if (!isMobile) return;
+
+    setShowZoomIndicator(true);
+
+    if (zoomIndicatorTimerRef.current) {
+      window.clearTimeout(zoomIndicatorTimerRef.current);
+    }
+
+    zoomIndicatorTimerRef.current = window.setTimeout(() => {
+      setShowZoomIndicator(false);
+    }, 2000);
+
+    return () => {
+      if (zoomIndicatorTimerRef.current) {
+        window.clearTimeout(zoomIndicatorTimerRef.current);
+      }
+    };
+  }, [zoom, isMobile]);
 
   // Herramienta de recorte
   const cropTool = useCropTool({
@@ -189,6 +235,9 @@ const Editor: React.FC = () => {
     if (t === "none" && activeTool === "crop") {
       cropTool.clearCrop();
     }
+    if (t === "crop" && activeTool !== "crop") {
+      cropTool.initializeCrop();
+    }
     if (t === "resize" && activeTool !== "resize") {
       resizeTool.initializeResize();
     }
@@ -272,88 +321,146 @@ const Editor: React.FC = () => {
           </button>
         </div>
       )}
-      <TopBar
-        fileName={file?.name}
-        fileSize={file?.size}
-        theme={theme}
-        onToggleTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
-        onReset={resetAll}
-        onExit={exitEditor}
-        onUndo={history.undo}
-        onRedo={history.redo}
-        canUndo={history.canUndo}
-        canRedo={history.canRedo}
-        onLoadNewImage={handleLoadNewImage}
-      />
+
+      {/* TopBar - Responsive */}
+      {isMobile ? (
+        <MobileTopBar
+          onMenuOpen={() => setIsMenuOpen(true)}
+          onApply={
+            activeTool === "crop"
+              ? cropTool.applyCrop
+              : activeTool === "resize"
+              ? () => {
+                  resizeTool.applyResize();
+                  setActiveTool("none");
+                }
+              : activeTool === "adjustments"
+              ? async () => {
+                  await adjustmentsTool.applyAdjustments();
+                  setActiveTool("none");
+                }
+              : activeTool === "filters"
+              ? async () => {
+                  await quickFilters.applyFilter();
+                  setActiveTool("none");
+                }
+              : undefined
+          }
+          hasChanges={
+            activeTool === "crop"
+              ? !!cropTool.completedCrop
+              : activeTool === "adjustments"
+              ? adjustmentsTool.hasChanges
+              : activeTool === "filters"
+              ? quickFilters.hasChanges
+              : false
+          }
+          activeTool={activeTool}
+        />
+      ) : (
+        <TopBar
+          fileName={file?.name}
+          fileSize={file?.size}
+          theme={theme}
+          onToggleTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
+          onReset={resetAll}
+          onExit={exitEditor}
+          onUndo={history.undo}
+          onRedo={history.redo}
+          canUndo={history.canUndo}
+          canRedo={history.canRedo}
+          onLoadNewImage={handleLoadNewImage}
+        />
+      )}
+
+      {/* Menu Drawer - Solo móvil */}
+      {isMobile && (
+        <MenuDrawer
+          isOpen={isMenuOpen}
+          onClose={() => setIsMenuOpen(false)}
+          onUndo={history.undo}
+          onRedo={history.redo}
+          canUndo={history.canUndo}
+          canRedo={history.canRedo}
+          onReset={resetAll}
+          onLoadNewImage={handleLoadNewImage}
+          theme={theme}
+          onToggleTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
+          onExit={exitEditor}
+        />
+      )}
 
       <div className={styles.mainContent}>
-        <ToolsPanel
-          activeTool={activeTool}
-          onSetActiveTool={handleToolChange}
-          cropRect={
-            cropTool.completedCrop
-              ? {
-                  x: cropTool.completedCrop.x,
-                  y: cropTool.completedCrop.y,
-                  width: cropTool.completedCrop.width,
-                  height: cropTool.completedCrop.height,
-                }
-              : null
-          }
-          natural={natural}
-          onInitCropIfNeeded={cropTool.initializeCrop}
-          onApplyCrop={cropTool.applyCrop}
-          onCancelCrop={() => {
-            cropTool.cancelCrop();
-            setActiveTool("none");
-          }}
-          newWidth={resizeTool.newWidth}
-          newHeight={resizeTool.newHeight}
-          maintainAspect={resizeTool.maintainAspect}
-          onChangeWidth={resizeTool.handleWidthChange}
-          onChangeHeight={resizeTool.handleHeightChange}
-          onToggleAspect={resizeTool.setMaintainAspect}
-          onApplyResize={() => {
-            resizeTool.applyResize();
-            setActiveTool("none");
-          }}
-          onCancelResize={() => {
-            resizeTool.cancelResize();
-            setActiveTool("none");
-          }}
-          onRotate90={() => transformTool.applyRotation(90)}
-          onRotateMinus90={() => transformTool.applyRotation(-90)}
-          onRotate180={() => transformTool.applyRotation(180)}
-          onFlipHorizontal={() => transformTool.applyFlip("horizontal")}
-          onFlipVertical={() => transformTool.applyFlip("vertical")}
-          brightness={adjustmentsTool.brightness}
-          contrast={adjustmentsTool.contrast}
-          saturation={adjustmentsTool.saturation}
-          onChangeBrightness={adjustmentsTool.setBrightness}
-          onChangeContrast={adjustmentsTool.setContrast}
-          onChangeSaturation={adjustmentsTool.setSaturation}
-          onApplyAdjustments={async () => {
-            await adjustmentsTool.applyAdjustments();
-            setActiveTool("none");
-          }}
-          onCancelAdjustments={() => {
-            adjustmentsTool.cancelAdjustments();
-            setActiveTool("none");
-          }}
-          hasAdjustmentChanges={adjustmentsTool.hasChanges}
-          activeFilter={quickFilters.activeFilter}
-          onSelectFilter={quickFilters.selectFilter}
-          onApplyFilter={async () => {
-            await quickFilters.applyFilter();
-            setActiveTool("none");
-          }}
-          onCancelFilter={() => {
-            quickFilters.cancelFilter();
-            setActiveTool("none");
-          }}
-          hasFilterChanges={quickFilters.hasChanges}
-          onOpenExportModal={() => setIsExportModalOpen(true)}
-        />
+        {/* Tools Panel/Bottom Sheet - Responsive */}
+        {!isMobile ? (
+          <ToolsPanel
+            activeTool={activeTool}
+            onSetActiveTool={handleToolChange}
+            cropRect={
+              cropTool.completedCrop
+                ? {
+                    x: cropTool.completedCrop.x,
+                    y: cropTool.completedCrop.y,
+                    width: cropTool.completedCrop.width,
+                    height: cropTool.completedCrop.height,
+                  }
+                : null
+            }
+            natural={natural}
+            onInitCropIfNeeded={cropTool.initializeCrop}
+            onApplyCrop={cropTool.applyCrop}
+            onCancelCrop={() => {
+              cropTool.cancelCrop();
+              setActiveTool("none");
+            }}
+            newWidth={resizeTool.newWidth}
+            newHeight={resizeTool.newHeight}
+            maintainAspect={resizeTool.maintainAspect}
+            onChangeWidth={resizeTool.handleWidthChange}
+            onChangeHeight={resizeTool.handleHeightChange}
+            onToggleAspect={resizeTool.setMaintainAspect}
+            onApplyResize={() => {
+              resizeTool.applyResize();
+              setActiveTool("none");
+            }}
+            onCancelResize={() => {
+              resizeTool.cancelResize();
+              setActiveTool("none");
+            }}
+            onRotate90={() => transformTool.applyRotation(90)}
+            onRotateMinus90={() => transformTool.applyRotation(-90)}
+            onRotate180={() => transformTool.applyRotation(180)}
+            onFlipHorizontal={() => transformTool.applyFlip("horizontal")}
+            onFlipVertical={() => transformTool.applyFlip("vertical")}
+            brightness={adjustmentsTool.brightness}
+            contrast={adjustmentsTool.contrast}
+            saturation={adjustmentsTool.saturation}
+            onChangeBrightness={adjustmentsTool.setBrightness}
+            onChangeContrast={adjustmentsTool.setContrast}
+            onChangeSaturation={adjustmentsTool.setSaturation}
+            onApplyAdjustments={async () => {
+              await adjustmentsTool.applyAdjustments();
+              setActiveTool("none");
+            }}
+            onCancelAdjustments={() => {
+              adjustmentsTool.cancelAdjustments();
+              setActiveTool("none");
+            }}
+            hasAdjustmentChanges={adjustmentsTool.hasChanges}
+            activeFilter={quickFilters.activeFilter}
+            onSelectFilter={quickFilters.selectFilter}
+            onApplyFilter={async () => {
+              await quickFilters.applyFilter();
+              setActiveTool("none");
+            }}
+            onCancelFilter={() => {
+              quickFilters.cancelFilter();
+              setActiveTool("none");
+            }}
+            hasFilterChanges={quickFilters.hasChanges}
+            onOpenExportModal={() => setIsExportModalOpen(true)}
+          />
+        ) : null}
 
         <div
           className={`${styles.canvasWrapper} ${
@@ -418,14 +525,14 @@ const Editor: React.FC = () => {
                 panDrag.isDragging ? styles.dragging : ""
               }`}
               ref={viewportRef}
-              onPointerDown={panDrag.startDrag}
-              onPointerMove={panDrag.onDrag}
-              onPointerUp={panDrag.endDrag}
-              onPointerLeave={panDrag.endDrag}
-              onWheel={handleWheel}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
+              onPointerDown={activeTool !== "crop" ? panDrag.startDrag : undefined}
+              onPointerMove={activeTool !== "crop" ? panDrag.onDrag : undefined}
+              onPointerUp={activeTool !== "crop" ? panDrag.endDrag : undefined}
+              onPointerLeave={activeTool !== "crop" ? panDrag.endDrag : undefined}
+              onWheel={activeTool !== "crop" ? handleWheel : undefined}
+              onTouchStart={activeTool !== "crop" ? handleTouchStart : undefined}
+              onTouchMove={activeTool !== "crop" ? handleTouchMove : undefined}
+              onTouchEnd={activeTool !== "crop" ? handleTouchEnd : undefined}
             >
               <img
                 ref={imgRef}
@@ -483,26 +590,118 @@ const Editor: React.FC = () => {
                 </div>
               )}
 
-              <ZoomControls
-                zoom={zoom}
-                onZoomOut={() =>
-                  setZoom((z) =>
-                    clamp(parseFloat((z / 1.1).toFixed(3)), 0.01, 4)
-                  )
-                }
-                onSlider={(v) => setZoom(v)}
-                onZoomIn={() =>
-                  setZoom((z) =>
-                    clamp(parseFloat((z * 1.1).toFixed(3)), 0.01, 4)
-                  )
-                }
-                onFit={fitToScreen}
-                onOneToOne={setOneToOne}
-              />
+              {/* Zoom Controls - Solo desktop */}
+              {!isMobile && (
+                <ZoomControls
+                  zoom={zoom}
+                  onZoomOut={() =>
+                    setZoom((z) =>
+                      clamp(parseFloat((z / 1.1).toFixed(3)), 0.01, 4)
+                    )
+                  }
+                  onSlider={(v) => setZoom(v)}
+                  onZoomIn={() =>
+                    setZoom((z) =>
+                      clamp(parseFloat((z * 1.1).toFixed(3)), 0.01, 4)
+                    )
+                  }
+                  onFit={fitToScreen}
+                  onOneToOne={setOneToOne}
+                />
+              )}
+
+              {/* Zoom Indicator - Solo móvil */}
+              {isMobile && <ZoomIndicator zoom={zoom} visible={showZoomIndicator} />}
             </div>
           )}
         </div>
       </div>
+
+      {/* Bottom Sheet - Solo móvil */}
+      {isMobile && objectURL && (
+        <BottomSheet
+          activeTool={activeTool}
+          onSetActiveTool={handleToolChange}
+          onOpenExportModal={() => setIsExportModalOpen(true)}
+        >
+          {activeTool === "crop" && (
+            <MobileCropControls
+              onApply={() => {
+                cropTool.applyCrop();
+                setActiveTool("none");
+              }}
+              onCancel={() => {
+                cropTool.cancelCrop();
+                setActiveTool("none");
+              }}
+              hasSelection={!!cropTool.completedCrop}
+            />
+          )}
+          {activeTool === "resize" && (
+            <MobileResizeControls
+              width={resizeTool.newWidth}
+              height={resizeTool.newHeight}
+              maintainAspect={resizeTool.maintainAspect}
+              onChangeWidth={resizeTool.handleWidthChange}
+              onChangeHeight={resizeTool.handleHeightChange}
+              onToggleAspect={resizeTool.setMaintainAspect}
+              onApply={() => {
+                resizeTool.applyResize();
+                setActiveTool("none");
+              }}
+              onCancel={() => {
+                resizeTool.cancelResize();
+                setActiveTool("none");
+              }}
+            />
+          )}
+          {activeTool === "transform" && (
+            <MobileTransformControls
+              onRotate90={() => transformTool.applyRotation(90)}
+              onRotateMinus90={() => transformTool.applyRotation(-90)}
+              onRotate180={() => transformTool.applyRotation(180)}
+              onFlipH={() => transformTool.applyFlip("horizontal")}
+              onFlipV={() => transformTool.applyFlip("vertical")}
+            />
+          )}
+          {activeTool === "adjustments" && (
+            <MobileAdjustmentsControls
+              brightness={adjustmentsTool.brightness}
+              contrast={adjustmentsTool.contrast}
+              saturation={adjustmentsTool.saturation}
+              onChangeBrightness={adjustmentsTool.setBrightness}
+              onChangeContrast={adjustmentsTool.setContrast}
+              onChangeSaturation={adjustmentsTool.setSaturation}
+              onApply={async () => {
+                await adjustmentsTool.applyAdjustments();
+                setActiveTool("none");
+              }}
+              onCancel={() => {
+                adjustmentsTool.cancelAdjustments();
+                setActiveTool("none");
+              }}
+              hasChanges={adjustmentsTool.hasChanges}
+            />
+          )}
+          {activeTool === "filters" && (
+            <MobileFilterControls
+              activeFilter={quickFilters.activeFilter}
+              onSelectFilter={(filter: string) =>
+                quickFilters.selectFilter(filter as "none" | "grayscale" | "sepia" | "invert")
+              }
+              onApply={async () => {
+                await quickFilters.applyFilter();
+                setActiveTool("none");
+              }}
+              onCancel={() => {
+                quickFilters.cancelFilter();
+                setActiveTool("none");
+              }}
+              hasChanges={quickFilters.hasChanges}
+            />
+          )}
+        </BottomSheet>
+      )}
 
       <ExportModal
         isOpen={isExportModalOpen}

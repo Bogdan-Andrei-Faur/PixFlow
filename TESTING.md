@@ -12,76 +12,158 @@
 - [ ] Imagen carga correctamente en el editor
 - [ ] Navegación de Home → Editor funciona
 
+#### Nueva Interfaz Móvil (v2.1.0)
+
+- [ ] **MobileTopBar** visible (≤768px viewport)
+- [ ] **Menú hamburguesa** (esquina superior izquierda) abre MenuDrawer
+- [ ] **Título centrado** muestra "PixFlow" o nombre de herramienta activa
+- [ ] **Botón Aplicar** (esquina superior derecha) solo visible cuando hay cambios pendientes
+- [ ] **MenuDrawer** se desliza desde la izquierda con animación
+- [ ] **Overlay oscuro** detrás del drawer (click para cerrar)
+- [ ] **Secciones del menú**:
+  - [ ] Edición: Undo/Redo con estados habilitado/deshabilitado correctos
+  - [ ] Imagen: Cargar nueva imagen, Reset
+  - [ ] Preferencias: Cambiar tema, Selector de idioma
+  - [ ] Salir: Botón rojo que regresa a Home
+- [ ] **LanguageSelector** visible y funcional dentro del menú
+- [ ] **BottomSheet** aparece en la parte inferior
+- [ ] **5 iconos de herramientas** visibles en BottomSheet colapsado
+- [ ] **Icono de descarga** (sexto botón) abre modal de exportación
+- [ ] **Swipe up** en BottomSheet expande la herramienta seleccionada
+- [ ] **Swipe down** en BottomSheet contrae/cierra herramienta
+- [ ] **Drag handle** (barrita horizontal) responde al tacto
+- [ ] **ZoomIndicator** aparece durante 2s al hacer zoom (esquina superior derecha)
+
 #### Gestos Táctiles
 
 - [ ] **Pan** - Arrastra la imagen con un dedo (mueve la vista)
 - [ ] **Pinch-to-zoom** - Pellizca con dos dedos para hacer zoom in/out
-- [ ] Zoom suave sin lags
+- [ ] **Double-tap** - Doble toque para alternar entre zoom 2× y fit-to-screen
+- [ ] Zoom suave sin lags (rango 0.01× - 8×)
 - [ ] No hay scroll accidental de la página mientras se hace pan
-- [ ] Los gestos no interfieren con los controles UI
+- [ ] Los gestos NO interfieren con los controles UI
+- [ ] **CRÍTICO**: Pan/zoom DESACTIVADOS cuando crop tool está activo
+- [ ] Puedes arrastrar los handles de crop sin que se active pan
 
 #### Controles de Zoom
 
-- [ ] Botones `+` y `-` funcionan
-- [ ] Botón "Fit" ajusta la imagen a la pantalla
-- [ ] Botón "1:1" establece zoom 100%
-- [ ] Slider de zoom responde correctamente
-- [ ] Todos los botones tienen tamaño táctil adecuado (≥44px)
-- [ ] Fácil de presionar con el dedo
+- [ ] ~~Botones `+` y `-` funcionan~~ (solo desktop en v2.1.0)
+- [ ] ~~Botón "Fit" ajusta la imagen a la pantalla~~ (solo desktop)
+- [ ] ~~Botón "1:1" establece zoom 100%~~ (solo desktop)
+- [ ] ~~Slider de zoom responde correctamente~~ (solo desktop)
+- [ ] **ZoomIndicator** muestra porcentaje correcto
+- [ ] **ZoomIndicator** desaparece después de 2 segundos
+- [ ] Double-tap funciona como alternativa a controles desktop
 
 ### 🛠️ Herramientas de Edición
 
 #### ✂️ Crop (Recorte)
 
-- [ ] Botón "Recortar" abre la herramienta
+- [ ] Tocar icono de **Recortar** en BottomSheet
+- [ ] BottomSheet se expande automáticamente
+- [ ] **Crop area inicializada al 100%** de la imagen automáticamente
 - [ ] Selector de área aparece sobre la imagen
+- [ ] **Hint**: "Arrastra los bordes para seleccionar el área a recortar"
 - [ ] Puedes ajustar las esquinas y bordes
-- [ ] Mensaje informativo aparece en iOS: "Las imágenes se optimizan automáticamente..."
+- [ ] **Pan y zoom DESACTIVADOS** (no puedes mover la imagen mientras crops)
+- [ ] Botón "Cancelar" cierra herramienta y restaura vista
 - [ ] Botón "Aplicar" ejecuta el recorte
 - [ ] Imagen recortada se muestra correctamente
 - [ ] **NO crashea en iPhone** (esto era crítico)
 - [ ] Undo funciona correctamente
+- [ ] Mensaje informativo NO aparece (removido en v2.1.0 por redundante)
 
 #### 📏 Resize (Redimensionar)
 
-- [ ] Campos de ancho/alto aceptan input
+- [ ] Tocar icono de **Redimensionar** en BottomSheet
+- [ ] BottomSheet se expande mostrando controles
+- [ ] **Inputs compactos**: Ancho y Alto en la misma fila
+- [ ] Campos de ancho/alto aceptan input numérico
+- [ ] **Checkbox "Mantener proporción"** con min-height 44px
 - [ ] Candado mantiene proporción de aspecto
-- [ ] Valores se actualizan correctamente
+- [ ] Valores se actualizan correctamente al cambiar uno (si proporción activa)
+- [ ] Botones "Cancelar" y "Aplicar" son touch-friendly (min-height 48px)
 - [ ] Aplicar redimensiona la imagen
 - [ ] Undo restaura tamaño original
+- [ ] **NO hay scroll horizontal** en inputs
 
 #### 🔄 Transform (Transformar)
 
+- [ ] Tocar icono de **Rotar** en BottomSheet
+- [ ] BottomSheet se expande mostrando controles
+- [ ] **Sección "Rotar"** con 3 botones:
+  - [ ] `-90°` con icono `IconRotateClockwise` volteado (`scaleX(-1)`)
+  - [ ] `90°` con icono `IconRotateClockwise`
+  - [ ] `180°` con icono `IconRotate`
+- [ ] **Sección "Voltear"** con 2 botones:
+  - [ ] Horizontal con icono `IconFlipHorizontal`
+  - [ ] Vertical con icono `IconFlipVertical`
+- [ ] **Iconos Tabler** (NO caracteres Unicode)
+- [ ] Grid responsive: min 120px por botón
 - [ ] Rotar 90° funciona
 - [ ] Rotar -90° funciona
 - [ ] Rotar 180° funciona
 - [ ] Voltear horizontal funciona
 - [ ] Voltear vertical funciona
 - [ ] Undo restaura orientación
+- [ ] **Efecto visual** al presionar (scale 0.97)
 
 #### 🎨 Adjustments (Ajustes)
 
-- [ ] Slider de brillo funciona
-- [ ] Slider de contraste funciona
-- [ ] Slider de saturación funciona
+- [ ] Tocar icono de **Ajustes** en BottomSheet
+- [ ] BottomSheet se expande mostrando 3 sliders
+- [ ] **Slider de brillo**:
+  - [ ] Label "Brillo" + valor actual (ej: "50%")
+  - [ ] Rango -100 a 100
+  - [ ] **Gradiente visible**: #333 → #4f46e5
+  - [ ] Altura: 6px
+  - [ ] Thumb: 18px, púrpura (#4f46e5)
+  - [ ] Hover en thumb aumenta tamaño (scale 1.1)
+- [ ] **Slider de contraste** (mismo estilo)
+- [ ] **Slider de saturación** (mismo estilo)
 - [ ] Preview se actualiza en tiempo real
+- [ ] Botones "Cancelar" y "Aplicar" visibles
 - [ ] Aplicar hace permanentes los cambios
-- [ ] Cancelar restaura valores
+- [ ] Cancelar restaura valores a 0
+- [ ] **Match con sliders desktop** (gradiente, tamaño thumb)
 
 #### 🖼️ Filters (Filtros)
 
-- [ ] Filtro de escala de grises
-- [ ] Filtro sepia
-- [ ] Filtro invertir
-- [ ] Preview instantáneo
+- [ ] Tocar icono de **Filtros** (paleta) en BottomSheet
+- [ ] BottomSheet se expande mostrando grid 2×2
+- [ ] **4 filtros disponibles**:
+  - [ ] Original
+  - [ ] Blanco y Negro
+  - [ ] Sepia
+  - [ ] Invertir
+- [ ] Filtro activo tiene fondo púrpura (#4f46e5)
+- [ ] Preview instantáneo al seleccionar filtro
+- [ ] Botones "Cancelar" y "Aplicar" visibles
 - [ ] Aplicar hace permanente el filtro
+- [ ] Cancelar restaura a "Original"
 
 ### 💾 Exportación y Guardado
 
-- [ ] Botón "Exportar" abre modal
-- [ ] Opciones de formato: PNG, JPEG, WebP
-- [ ] Slider de calidad (solo JPEG/WebP)
-- [ ] Botón "Descargar" funciona
+- [ ] Tocar **icono de descarga** en BottomSheet
+- [ ] Modal de exportación se abre (ExportModal)
+- [ ] **Nombre de archivo** editable (sin extensión)
+- [ ] Extensión mostrada a la derecha (.png, .jpeg, .webp)
+- [ ] **3 formatos disponibles**:
+  - [ ] PNG con icono de info (tooltip)
+  - [ ] JPEG con icono de info (tooltip)
+  - [ ] WebP con icono de info (tooltip)
+- [ ] **Tooltips visibles** al presionar icono de info
+  - [ ] Tooltip centrado en pantalla (position: fixed)
+  - [ ] Z-index: 10000 (sobre modal backdrop)
+  - [ ] Max-width: 90vw (responsive móvil)
+  - [ ] Información detallada de cada formato
+- [ ] **Slider de calidad** (solo JPEG/WebP)
+  - [ ] Deshabilitado para PNG
+  - [ ] Rango 1-100
+  - [ ] Valor mostrado (ej: "85%")
+- [ ] **Tamaño estimado** se actualiza al cambiar formato/calidad
+- [ ] Botón "Cancelar" cierra modal
+- [ ] Botón "Descargar" descarga archivo
 - [ ] Archivo se descarga con nombre correcto
 - [ ] Archivo abre correctamente en galería
 
@@ -106,34 +188,95 @@
 
 - [ ] Logo visible y centrado
 - [ ] Botón "Seleccionar imagen" es grande y táctil
-- [ ] Área de drop funciona
+- [ ] Área de drop funciona (drag & drop en móvil si browser lo soporta)
 - [ ] Mensajes de error se muestran claramente
 - [ ] Footer con info del autor
 
-#### Editor - TopBar
+#### Editor - MobileTopBar (v2.1.0)
 
-- [ ] Se adapta a pantalla móvil
-- [ ] Nombre de archivo visible (puede truncarse)
-- [ ] Iconos accesibles
-- [ ] Menú hamburger si es necesario
-- [ ] Botones de undo/redo visibles
+- [ ] **Altura fija**: 56px
+- [ ] **Menú hamburguesa** (izquierda):
+  - [ ] Icono `IconMenu2` (3 líneas horizontales)
+  - [ ] Min-width/height: 44px
+  - [ ] Abre MenuDrawer al tocar
+- [ ] **Título centrado**:
+  - [ ] Muestra "PixFlow" con icono cuando no hay herramienta activa
+  - [ ] Muestra nombre de herramienta cuando está activa (ej: "Crop", "Resize")
+  - [ ] Font-size: 1.125rem, peso 600
+- [ ] **Botón Aplicar** (derecha):
+  - [ ] Visible solo cuando `hasChanges === true`
+  - [ ] Icono `IconCheck` en botón púrpura
+  - [ ] Ejecuta acción de aplicar de la herramienta activa
+  - [ ] Espaciador vacío (44px) cuando no hay cambios pendientes
 
-#### Editor - ToolsPanel
+#### Editor - MenuDrawer (v2.1.0)
 
-- [ ] Aparece como drawer en la parte inferior
-- [ ] Se puede cerrar/abrir fácilmente
-- [ ] Herramientas listadas claramente
-- [ ] Controles de cada herramienta accesibles
-- [ ] No cubre la imagen completamente
-- [ ] Botones "Aplicar" y "Cancelar" bien posicionados
+- [ ] **Apertura**: Animación slide desde izquierda
+- [ ] **Cierre**: Click en overlay o botón X
+- [ ] **Ancho**: min(320px, 85vw) desktop, min(280px, 80vw) móvil
+- [ ] **Header**:
+  - [ ] Título "Menú" centrado
+  - [ ] Botón X (derecha) con min 44×44px
+- [ ] **Secciones**:
+  - [ ] "Edición": Undo, Redo (con estados disabled correctos)
+  - [ ] "Imagen": Cargar nueva imagen, Reset
+  - [ ] "Preferencias": Toggle tema (luna/sol), LanguageSelector
+  - [ ] Botón "Salir" en rojo (#ef4444)
+- [ ] **Items de menú**:
+  - [ ] Min-height: 48px
+  - [ ] Iconos 20px + texto
+  - [ ] Hover: background rgba(255,255,255,0.05)
+  - [ ] Active: background rgba(255,255,255,0.1) + scale 0.95
+- [ ] **LanguageSelector**:
+  - [ ] Wrapper con padding 0.5rem 1.25rem
+  - [ ] Dropdown z-index 1001 (sobre drawer z-index 999)
+  - [ ] Opciones visibles al abrir
+- [ ] **Scroll**: Overflow-y auto, overflow-x hidden
+- [ ] **Body scroll lock**: `overflow: hidden` cuando drawer abierto
 
-#### Zoom Controls
+#### Editor - BottomSheet (v2.1.0)
 
-- [ ] Posicionados en la parte superior en móvil
-- [ ] Ancho completo con espacio lateral
-- [ ] Botones grandes (44x44px)
-- [ ] Espaciado adecuado entre elementos
-- [ ] Slider con altura suficiente para touch
+- [ ] **Posición**: Fixed bottom, full width
+- [ ] **Altura colapsado**: 100px (desktop), 90px (móvil)
+- [ ] **Altura expandido**: auto, max-height 70vh (desktop), 65vh (móvil)
+- [ ] **Drag handle**:
+  - [ ] Barrita horizontal 40×4px, opacidad 0.5
+  - [ ] Cursor grab/grabbing
+  - [ ] Responsive al tacto
+- [ ] **Vista colapsada**:
+  - [ ] 5 iconos de herramientas + 1 descarga
+  - [ ] Distribución uniforme (space-around)
+  - [ ] Min-width: 52px, min-height: 52px (desktop)
+  - [ ] Min-width: 48px, min-height: 48px (móvil)
+  - [ ] Icono activo: fondo púrpura (#4f46e5)
+  - [ ] Hover: borde púrpura
+- [ ] **Vista expandida**:
+  - [ ] Header con título de herramienta
+  - [ ] Área de controles scrollable (max-height calc(65vh - 100px))
+  - [ ] Scrollbar custom (6px, #333)
+- [ ] **Swipe gestures**:
+  - [ ] Swipe up (> -50px): expande si hay herramienta activa
+  - [ ] Swipe down (> 50px): contrae y desactiva herramienta
+- [ ] **Animación**: slideUp 0.3s ease-out al aparecer
+- [ ] **Toggle herramienta**: Tap en icono activo lo desactiva
+
+#### Editor - Canvas Area
+
+- [ ] **Altura móvil**: `calc(100dvh - 56px - 100px)` (resta TopBar + BottomSheet)
+- [ ] **BottomSheet expandido**: Canvas min-height 30vh
+- [ ] **Centrado**: flex center vertical y horizontal
+- [ ] **Landscape**: Altura ajustada a `calc(100dvh - 50px - 80px)`
+- [ ] **Responsive**: Se adapta al expandir/contraer BottomSheet
+
+#### Zoom Indicator (v2.1.0)
+
+- [ ] **Posición**: Fixed, top 70px (65px móvil), right 1rem (0.75rem móvil)
+- [ ] **Estilo**: Background negro semi-transparente, backdrop-filter blur
+- [ ] **Contenido**: Porcentaje de zoom (ej: "150%")
+- [ ] **Visibilidad**: Aparece al cambiar zoom, desaparece a los 2s
+- [ ] **Animación**: Fade in/out + scale 0.9 → 1
+- [ ] **Z-index**: 90 (bajo BottomSheet 95, MenuDrawer 999)
+- [ ] **Solo móvil**: No se muestra en desktop (≥769px)
 
 ### 📱 PWA - Progressive Web App
 

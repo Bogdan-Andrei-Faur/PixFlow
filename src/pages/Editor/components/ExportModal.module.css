@@ -183,18 +183,19 @@
 }
 
 .tooltipContent {
-  position: absolute;
-  right: 100%;
+  position: fixed;
+  right: auto;
+  left: 50%;
   top: 50%;
-  transform: translateY(-50%);
-  margin-right: 0.75rem;
+  transform: translate(-50%, -50%);
   background-color: #262626;
   border: 1px solid #444;
   border-radius: 8px;
   padding: 1rem;
   min-width: 280px;
+  max-width: 90vw;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  z-index: 10;
+  z-index: 10000;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s;

@@ -14,6 +14,8 @@
   font-size: 0.85rem;
   cursor: pointer;
   transition: background 0.15s;
+  width: 100%;
+  min-height: 44px;
 }
 
 .trigger:hover {
@@ -33,19 +35,20 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 99;
+  z-index: 1000;
 }
 
 .dropdown {
   position: absolute;
   top: calc(100% + 0.5rem);
-  right: 0;
+  left: 0;
   background: #262626;
   border: 1px solid #444;
   border-radius: 6px;
   min-width: 160px;
+  width: 100%;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  z-index: 100;
+  z-index: 1001;
   overflow: hidden;
 }
 

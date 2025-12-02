@@ -7,7 +7,8 @@
     "exit": "Salir",
     "reset": "Reset",
     "new": "Nueva",
-    "back": "Volver al inicio"
+    "back": "Volver al inicio",
+    "close": "Cerrar"
   },
   "units": {
     "px": "px",
@@ -22,5 +23,12 @@
     "undo": "Deshacer",
     "redo": "Rehacer",
     "loadImage": "Cargar nueva imagen"
+  },
+  "menu": {
+    "title": "Menú",
+    "editing": "Edición",
+    "image": "Imagen",
+    "preferences": "Preferencias",
+    "about": "Acerca de"
   }
 }
