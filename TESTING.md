@@ -183,20 +183,20 @@
 
 #### Navegadores para Probar
 
-**iOS**
+##### iOS
 
 - [ ] Safari (navegador principal)
 - [ ] Chrome iOS (motor WebKit)
 - [ ] Diferentes tamaños: iPhone SE, 14, 15 Pro Max
 
-**Android**
+##### Android
 
 - [ ] Chrome (recomendado)
 - [ ] Samsung Internet
 - [ ] Firefox
 - [ ] Diferentes tamaños: pequeño, estándar, grande
 
-**Desktop**
+##### Desktop
 
 - [ ] Chrome
 - [ ] Edge

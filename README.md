@@ -78,7 +78,7 @@ El editor estará disponible en `http://localhost:5173`
 
 ### iOS (Safari)
 
-1. Abre https://pixflow.andreifaur.dev en Safari
+1. Abre <https://pixflow.andreifaur.dev> en Safari
 2. Toca el botón "Compartir" (cuadrado con flecha hacia arriba)
 3. Desplázate y toca "Añadir a pantalla de inicio"
 4. Personaliza el nombre si lo deseas y toca "Añadir"
@@ -86,14 +86,14 @@ El editor estará disponible en `http://localhost:5173`
 
 ### Android (Chrome)
 
-1. Abre https://pixflow.andreifaur.dev en Chrome
+1. Abre <https://pixflow.andreifaur.dev> en Chrome
 2. Toca el menú (⋮) y selecciona "Añadir a pantalla de inicio"
 3. Confirma en el diálogo que aparece
 4. La app se instalará en tu launcher
 
 ### Desktop (Chrome/Edge)
 
-1. Abre https://pixflow.andreifaur.dev
+1. Abre <https://pixflow.andreifaur.dev>
 2. Mira el icono de instalación en la barra de direcciones
 3. Haz clic en "Instalar"
 4. La app se abrirá en su propia ventana
