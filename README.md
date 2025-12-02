@@ -115,12 +115,12 @@ El editor estará disponible en `http://localhost:5173`
 
 ## 🌐 Compatibilidad de Navegadores
 
-| Navegador       | Versión Mínima | Características                    |
-| --------------- | -------------- | ---------------------------------- |
-| Chrome/Edge     | 90+            | ✅ Todas (PWA, offline, gestos)    |
-| Safari (iOS)    | 15.4+          | ✅ Todas (optimizaciones especiales) |
-| Firefox         | 88+            | ✅ Todas (sin instalación PWA)     |
-| Samsung Internet| 14+            | ✅ Todas                           |
+| Navegador        | Versión Mínima | Características                      |
+| ---------------- | -------------- | ------------------------------------ |
+| Chrome/Edge      | 90+            | ✅ Todas (PWA, offline, gestos)      |
+| Safari (iOS)     | 15.4+          | ✅ Todas (optimizaciones especiales) |
+| Firefox          | 88+            | ✅ Todas (sin instalación PWA)       |
+| Samsung Internet | 14+            | ✅ Todas                             |
 
 **Nota**: Las imágenes se optimizan automáticamente en dispositivos móviles para prevenir crashes por memoria.
 

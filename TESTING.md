@@ -5,6 +5,7 @@
 ### ✅ Funcionalidad Básica
 
 #### Carga de Imágenes
+
 - [ ] Seleccionar imagen desde galería
 - [ ] Imagen se optimiza automáticamente (verifica en consola si es >1024px)
 - [ ] Mensaje de "Optimizando imagen..." aparece brevemente
@@ -12,6 +13,7 @@
 - [ ] Navegación de Home → Editor funciona
 
 #### Gestos Táctiles
+
 - [ ] **Pan** - Arrastra la imagen con un dedo (mueve la vista)
 - [ ] **Pinch-to-zoom** - Pellizca con dos dedos para hacer zoom in/out
 - [ ] Zoom suave sin lags
@@ -19,6 +21,7 @@
 - [ ] Los gestos no interfieren con los controles UI
 
 #### Controles de Zoom
+
 - [ ] Botones `+` y `-` funcionan
 - [ ] Botón "Fit" ajusta la imagen a la pantalla
 - [ ] Botón "1:1" establece zoom 100%
@@ -29,6 +32,7 @@
 ### 🛠️ Herramientas de Edición
 
 #### ✂️ Crop (Recorte)
+
 - [ ] Botón "Recortar" abre la herramienta
 - [ ] Selector de área aparece sobre la imagen
 - [ ] Puedes ajustar las esquinas y bordes
@@ -39,6 +43,7 @@
 - [ ] Undo funciona correctamente
 
 #### 📏 Resize (Redimensionar)
+
 - [ ] Campos de ancho/alto aceptan input
 - [ ] Candado mantiene proporción de aspecto
 - [ ] Valores se actualizan correctamente
@@ -46,6 +51,7 @@
 - [ ] Undo restaura tamaño original
 
 #### 🔄 Transform (Transformar)
+
 - [ ] Rotar 90° funciona
 - [ ] Rotar -90° funciona
 - [ ] Rotar 180° funciona
@@ -54,6 +60,7 @@
 - [ ] Undo restaura orientación
 
 #### 🎨 Adjustments (Ajustes)
+
 - [ ] Slider de brillo funciona
 - [ ] Slider de contraste funciona
 - [ ] Slider de saturación funciona
@@ -62,6 +69,7 @@
 - [ ] Cancelar restaura valores
 
 #### 🖼️ Filters (Filtros)
+
 - [ ] Filtro de escala de grises
 - [ ] Filtro sepia
 - [ ] Filtro invertir
@@ -95,6 +103,7 @@
 ### 📱 Interfaz Móvil
 
 #### Home Page
+
 - [ ] Logo visible y centrado
 - [ ] Botón "Seleccionar imagen" es grande y táctil
 - [ ] Área de drop funciona
@@ -102,6 +111,7 @@
 - [ ] Footer con info del autor
 
 #### Editor - TopBar
+
 - [ ] Se adapta a pantalla móvil
 - [ ] Nombre de archivo visible (puede truncarse)
 - [ ] Iconos accesibles
@@ -109,6 +119,7 @@
 - [ ] Botones de undo/redo visibles
 
 #### Editor - ToolsPanel
+
 - [ ] Aparece como drawer en la parte inferior
 - [ ] Se puede cerrar/abrir fácilmente
 - [ ] Herramientas listadas claramente
@@ -117,6 +128,7 @@
 - [ ] Botones "Aplicar" y "Cancelar" bien posicionados
 
 #### Zoom Controls
+
 - [ ] Posicionados en la parte superior en móvil
 - [ ] Ancho completo con espacio lateral
 - [ ] Botones grandes (44x44px)
@@ -126,6 +138,7 @@
 ### 📱 PWA - Progressive Web App
 
 #### Instalación
+
 - [ ] Safari (iOS): opción "Añadir a pantalla de inicio" disponible
 - [ ] Chrome (Android): prompt de instalación aparece
 - [ ] Desktop: icono de instalación en barra de direcciones
@@ -133,6 +146,7 @@
 - [ ] Icono correcto en launcher/home screen
 
 #### Funcionamiento Offline
+
 - [ ] Abre la app instalada
 - [ ] Desactiva WiFi/datos móviles
 - [ ] La app sigue funcionando
@@ -140,6 +154,7 @@
 - [ ] Service Worker cachea assets correctamente
 
 #### Manifest
+
 - [ ] `manifest.json` se carga sin errores (dev tools)
 - [ ] Nombre de la app correcto
 - [ ] Iconos de todos los tamaños disponibles
@@ -148,12 +163,14 @@
 ### 🎯 Rendimiento
 
 #### Optimización de Imágenes
+
 - [ ] Fotos grandes (>1024px) se redimensionan automáticamente en móvil
 - [ ] Tiempo de carga razonable (<3 segundos para imágenes grandes)
 - [ ] No hay memory leaks visibles
 - [ ] App responde fluidamente
 
 #### Crop en iOS (Prueba Crítica)
+
 - [ ] iPhone: carga foto de máxima calidad (48MP si es iPhone 15 Pro Max)
 - [ ] Imagen se optimiza a 1024×1024px automáticamente
 - [ ] Selecciona área de crop
@@ -167,17 +184,20 @@
 #### Navegadores para Probar
 
 **iOS**
+
 - [ ] Safari (navegador principal)
 - [ ] Chrome iOS (motor WebKit)
 - [ ] Diferentes tamaños: iPhone SE, 14, 15 Pro Max
 
 **Android**
+
 - [ ] Chrome (recomendado)
 - [ ] Samsung Internet
 - [ ] Firefox
 - [ ] Diferentes tamaños: pequeño, estándar, grande
 
 **Desktop**
+
 - [ ] Chrome
 - [ ] Edge
 - [ ] Firefox
