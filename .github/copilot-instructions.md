@@ -2,10 +2,11 @@
 
 ## Project Overview
 
-PixFlow is a browser-based image editor built with React 19 + TypeScript + Vite. It uses destructive editing with Canvas API and client-side routing with React Router.
+PixFlow is a **Progressive Web App (PWA)** image editor built with React 19 + TypeScript + Vite. It uses destructive editing with Canvas API, client-side routing with React Router, and is optimized for mobile devices with touch gestures and automatic image optimization.
 
-**Live URL**: https://pixflow.andreifaur.dev  
-**Routes**: `/` (home), `/editor` (editor)
+**Live URL**: <https://pixflow.andreifaur.dev>  
+**Routes**: `/` (home), `/editor` (editor)  
+**Type**: PWA - Installable, offline-capable, mobile-optimized
 
 ## Architecture Patterns
 
@@ -34,11 +35,13 @@ canvas.toBlob((blob) => {
 
 **Custom Hooks** (`/src/pages/Editor/hooks/`):
 
-- `useCropTool` - Rectangle crop (react-image-crop)
+- `useCropTool` - Rectangle crop with iOS optimization (1024px mobile limit, JPEG output)
 - `useResizeTool` - Width/height with aspect ratio lock
 - `useTransformTool` - Rotate (90°/-90°/180°), flip (H/V)
 - `useAdjustmentsTool` - Brightness/contrast/saturation sliders
 - `useQuickFilters` - One-click filters (grayscale/sepia/invert)
+- `useZoomPan` - Zoom and pan controls with touch gesture support (pinch-to-zoom, pan)
+- `useEditorHistory` - Undo/redo with snapshots
 
 ### 2. State Management
 
@@ -46,7 +49,101 @@ canvas.toBlob((blob) => {
 - **History**: `useEditorHistory` stores snapshots (file + natural dimensions + zoom/offset)
 - **Local**: Tool hooks manage their own state (crop rect, brightness value, etc.)
 
-### 3. GitHub Pages SPA Configuration
+### 3. Image Optimization System
+
+**Critical for Mobile Performance**: Automatic optimization prevents iOS Safari crashes.
+
+**Mobile Limits** (≤768px viewport):
+
+- Max dimensions: 1024×1024px
+- Max file size: 2MB
+- JPEG quality: 75%
+- Format: JPEG (not PNG)
+
+**Desktop Limits**:
+
+- Max dimensions: 4096×4096px
+- Max file size: 15MB
+- JPEG quality: 92%
+
+**Implementation** (`/src/utils/imageOptimization.ts`):
+
+```typescript
+export async function optimizeImageForDevice(file: File): Promise<File> {
+  const isMobile = isMobileDevice();
+  const limits = isMobile ? DEFAULT_MOBILE_OPTIONS : DEFAULT_DESKTOP_OPTIONS;
+  // ... resize + JPEG compression
+}
+```
+
+**Integration Points**:
+
+- `ImageUploader.tsx` - Auto-optimizes on upload
+- `useCropTool.ts` - Enforces limits on crop output
+- Detection: User agent + viewport width
+
+### 4. Touch Gesture System
+
+**Gestures Supported**:
+
+- **Pinch-to-zoom**: Two-finger distance calculation
+- **Pan**: Single-finger drag
+- **Tap**: Standard button interaction
+
+**Implementation** (`useZoomPan.ts`):
+
+```typescript
+const getTouchDistance = (touches: React.TouchList): number => {
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+};
+
+const handleTouchMove = (e: React.TouchEvent) => {
+  if (e.touches.length === 2 && touchStateRef.current) {
+    const newDistance = getTouchDistance(e.touches);
+    const scale = newDistance / touchStateRef.current.distance;
+    setZoom((prevZoom) => clamp(prevZoom * scale, 0.01, 8));
+  }
+};
+```
+
+**UI Guidelines**:
+
+- Minimum button size: 44×44px (iOS/Android guidelines)
+- Touch targets: Adequate spacing (0.6rem minimum)
+- Prevent scroll interference: `e.preventDefault()` on touch events
+
+### 5. Progressive Web App (PWA)
+
+**Service Worker** (`/public/sw.js`):
+
+- Cache-first strategy for static assets
+- Offline functionality
+- Version-based cache management
+
+**Web Manifest** (`/public/manifest.json`):
+
+- 9 icon sizes (72×72 to 512×512)
+- Theme color: `#4f46e5`
+- Display: standalone
+- Start URL: `/`
+
+**Installation**:
+
+- iOS: "Add to Home Screen" from Safari share menu
+- Android: Install prompt in Chrome
+- Desktop: Install icon in address bar
+
+**Meta Tags** (`index.html`):
+
+```html
+<meta name="theme-color" content="#4f46e5" />
+<link rel="apple-touch-icon" href="/icon-192x192.png" />
+<meta name="mobile-web-app-capable" content="yes" />
+```
+
+### 6. GitHub Pages SPA Configuration
 
 **Critical**: Build script copies `index.html` to `404.html` for client-side routing fallback.
 
@@ -92,8 +189,11 @@ Without this, direct access to `/editor` shows GitHub's 404 page. The `404.html`
 
 - Always use `naturalWidth`/`naturalHeight` (not rendered dimensions)
 - Set canvas size before drawing: `canvas.width = targetWidth`
-- Convert to blob with format: `canvas.toBlob(callback, "image/png")`
-- Create new File from blob: `new File([blob], "name.png", { type: "image/png" })`
+- **Mobile-specific**: Enforce dimension limits (1024px max) before canvas operations
+- **Format optimization**: Use JPEG instead of PNG for photos (60-80% size reduction)
+- Convert to blob with format: `canvas.toBlob(callback, "image/jpeg", quality)`
+- Create new File from blob: `new File([blob], "name.jpg", { type: "image/jpeg" })`
+- **Memory management**: Call `ctx.clearRect()` after operations on mobile
 
 ### Deployment
 
@@ -140,5 +240,11 @@ ls -la dist/index.html dist/404.html
 - `/src/context/ImageEditorContext.tsx` - Global state
 - `/src/pages/Editor/hooks/useEditorHistory.ts` - Undo/redo snapshots
 - `/src/pages/Editor/hooks/useQuickFilters.ts` - Example tool implementation
+- `/src/pages/Editor/hooks/useZoomPan.ts` - Zoom/pan with touch gestures
+- `/src/utils/imageOptimization.ts` - Auto-optimization by device
+- `/src/pages/Editor/components/ToolsPanel/` - Modular tool components (14 files)
+- `/public/sw.js` - Service Worker for offline functionality
+- `/public/manifest.json` - PWA manifest
 - `package.json` - Build script with 404.html copy
 - `.github/workflows/deploy.yml` - CI/CD pipeline
+- `TESTING.md` - Comprehensive testing guide (100+ checkpoints)
