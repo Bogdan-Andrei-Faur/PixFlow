@@ -6,7 +6,78 @@ PixFlow is a **Progressive Web App (PWA)** image editor built with React 19 + Ty
 
 **Live URL**: <https://pixflow.andreifaur.dev>  
 **Routes**: `/` (home), `/editor` (editor)  
-**Type**: PWA - Installable, offline-capable, mobile-optimized
+**Type**: PWA - Installable, offline-capable, mobile-optimized  
+**Version**: v2.2.0 (Architecture reorganization with desktop/mobile separation)
+
+## 📚 Documentation Files (READ THESE FIRST)
+
+Before making changes, consult these comprehensive guides:
+
+- **[ARCHITECTURE.md](../ARCHITECTURE.md)** - Complete project architecture, design patterns, step-by-step guides
+- **[DOCUMENTACION_HOOKS.md](../DOCUMENTACION_HOOKS.md)** - Quick reference for all 10 hooks with JSDoc
+- **[TESTING.md](../TESTING.md)** - Testing guide with 100+ checkpoints
+- **[CHANGELOG.md](../CHANGELOG.md)** - Version history with v2.2.0 refactoring details
+
+All hooks have **complete JSDoc documentation** in their source files with `@param`, `@returns`, and `@example` sections.
+
+## Architecture v2.2.0 - Organized Structure
+
+### Component Organization (Desktop/Mobile/Shared Separation)
+
+```text
+src/pages/Editor/
+├── components/
+│   ├── desktop/           # Desktop-specific components
+│   │   ├── TopBar/        # Navigation + undo/redo + theme + language
+│   │   ├── ZoomControls/  # Zoom slider + buttons (Fit/1:1)
+│   │   └── ToolsPanel/    # Lateral panel with 5 tools
+│   │       ├── DesktopPanel.tsx
+│   │       ├── desktop/   # 5 detailed panels (Adjustments, Crop, Filters, Resize, Transform)
+│   │       ├── types.ts   # Shared types (Tool, NaturalDims, CropRect, FilterType)
+│   │       └── index.tsx
+│   ├── mobile/            # Mobile-specific components
+│   │   ├── MobileTopBar/  # Hamburger menu + title + apply button
+│   │   ├── MenuDrawer/    # Slide-out drawer (undo/redo/reset/exit)
+│   │   ├── BottomSheet/   # Expandable bottom panel with tools
+│   │   ├── ZoomIndicator/ # Temporary zoom percentage (2s)
+│   │   ├── MobileToolControls/ # 5 touch-optimized control variants
+│   │   └── ToolsPanel/    # Mobile tools dock
+│   │       ├── MobileDock.tsx
+│   │       └── docks/     # 5 mobile tool panels
+│   ├── shared/            # Shared components
+│   │   ├── ExportModal/   # Export with format/quality selection
+│   │   └── ReactCrop/     # react-image-crop wrapper
+│   └── index.ts           # Barrel exports (centralized imports)
+├── hooks/
+│   ├── tools/             # Editing tool hooks
+│   │   ├── useCropTool.ts       # Crop with mobile limits (1024px, JPEG)
+│   │   ├── useResizeTool.ts     # Resize with aspect ratio lock
+│   │   ├── useTransformTool.ts  # Rotate (90°/-90°/180°), flip (H/V)
+│   │   ├── useAdjustmentsTool.ts # Brightness/contrast/saturation
+│   │   └── useQuickFilters.ts   # Grayscale/sepia/invert
+│   ├── interaction/       # User interaction hooks
+│   │   ├── useZoomPan.ts        # Zoom + pan with touch gestures
+│   │   ├── usePanDrag.ts        # Pointer-based drag for pan
+│   │   └── useKeyboardShortcuts.ts # Cmd+Z/Y, zoom shortcuts
+│   ├── state/             # State management hooks
+│   │   ├── useEditorHistory.ts  # Undo/redo with snapshots
+│   │   └── useImageExport.ts    # Export with format conversion
+│   └── index.ts           # Barrel exports (centralized imports)
+└── Editor.tsx             # Main orchestrator component
+```
+
+### Barrel Exports - Simplified Imports
+
+All components and hooks use centralized exports:
+
+```typescript
+// ✅ Clean imports via barrel exports
+import { MobileTopBar, BottomSheet, ZoomControls } from "./components";
+import { useZoomPan, useCropTool, useEditorHistory } from "./hooks";
+
+// ❌ Avoid deep relative paths
+import { useZoomPan } from "./hooks/interaction/useZoomPan";
+```
 
 ## Architecture Patterns
 
@@ -18,7 +89,7 @@ All editing tools follow a **preview → apply → undo/redo** pattern:
 - **Apply**: Canvas manipulation creates new File (destructive, permanent)
 - **Undo/Redo**: Snapshots stored with `useEditorHistory` hook
 
-**Example** (see `/src/pages/Editor/hooks/useQuickFilters.ts`):
+**Example** (see `/src/pages/Editor/hooks/tools/useQuickFilters.ts`):
 
 ```typescript
 // 1. Preview (CSS)
@@ -33,15 +104,24 @@ canvas.toBlob((blob) => {
 });
 ```
 
-**Custom Hooks** (`/src/pages/Editor/hooks/`):
+**All Tool Hooks** (in `/src/pages/Editor/hooks/tools/`):
 
 - `useCropTool` - Rectangle crop with iOS optimization (1024px mobile limit, JPEG output)
 - `useResizeTool` - Width/height with aspect ratio lock
 - `useTransformTool` - Rotate (90°/-90°/180°), flip (H/V)
 - `useAdjustmentsTool` - Brightness/contrast/saturation sliders
 - `useQuickFilters` - One-click filters (grayscale/sepia/invert)
-- `useZoomPan` - Zoom and pan controls with touch gesture support (pinch-to-zoom, pan)
-- `useEditorHistory` - Undo/redo with snapshots
+
+**All Interaction Hooks** (in `/src/pages/Editor/hooks/interaction/`):
+
+- `useZoomPan` - Zoom and pan with touch gestures (pinch, double-tap, pan)
+- `usePanDrag` - Pointer-based drag for desktop pan
+- `useKeyboardShortcuts` - Cmd+Z/Y/+/-/0 shortcuts
+
+**All State Hooks** (in `/src/pages/Editor/hooks/state/`):
+
+- `useEditorHistory` - Undo/redo with snapshot stack
+- `useImageExport` - Export with format/quality control
 
 ### 2. State Management
 
@@ -49,7 +129,35 @@ canvas.toBlob((blob) => {
 - **History**: `useEditorHistory` stores snapshots (file + natural dimensions + zoom/offset)
 - **Local**: Tool hooks manage their own state (crop rect, brightness value, etc.)
 
-### 3. Image Optimization System
+### 3. Responsive Design Pattern (Desktop/Mobile Separation)
+
+**Problem**: Different UX requirements for desktop vs mobile  
+**Solution**: Separate components in `desktop/` and `mobile/` folders
+
+```typescript
+// Editor.tsx orchestrates both
+const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+{isMobile ? <MobileTopBar /> : <TopBar />}
+{isMobile ? <BottomSheet /> : <ToolsPanel />}
+{isMobile && <ZoomIndicator />}
+```
+
+**Mobile Components**:
+
+- `MobileTopBar` - Menu (left), title (center), apply (right)
+- `MenuDrawer` - Slide-out drawer with undo/redo/reset/exit
+- `BottomSheet` - Expandable panel (100px ↔ auto) with tools
+- `ZoomIndicator` - Temporary zoom percentage display (2s)
+- `MobileToolControls` - 5 touch-optimized variants per tool
+
+**Desktop Components**:
+
+- `TopBar` - Full navigation bar
+- `ZoomControls` - Always-visible zoom controls
+- `ToolsPanel` - Lateral panel with detailed controls
+
+### 4. Image Optimization System
 
 **Critical for Mobile Performance**: Automatic optimization prevents iOS Safari crashes.
 
@@ -82,7 +190,7 @@ export async function optimizeImageForDevice(file: File): Promise<File> {
 - `useCropTool.ts` - Enforces limits on crop output
 - Detection: User agent + viewport width
 
-### 4. Touch Gesture System
+### 5. Touch Gesture System
 
 **Gestures Supported**:
 
@@ -114,7 +222,7 @@ const handleTouchMove = (e: React.TouchEvent) => {
 - Touch targets: Adequate spacing (0.6rem minimum)
 - Prevent scroll interference: `e.preventDefault()` on touch events
 
-### 5. Progressive Web App (PWA)
+### 6. Progressive Web App (PWA)
 
 **Service Worker** (`/public/sw.js`):
 
@@ -143,7 +251,7 @@ const handleTouchMove = (e: React.TouchEvent) => {
 <meta name="mobile-web-app-capable" content="yes" />
 ```
 
-### 6. GitHub Pages SPA Configuration
+### 7. GitHub Pages SPA Configuration
 
 **Critical**: Build script copies `index.html` to `404.html` for client-side routing fallback.
 
@@ -179,7 +287,7 @@ Without this, direct access to `/editor` shows GitHub's 404 page. The `404.html`
 
 ### Adding a New Tool
 
-1. Create hook in `/src/pages/Editor/hooks/useTOOLNAME.ts`
+1. Create hook in `/src/pages/Editor/hooks/tools/useTOOLNAME.ts`
 2. Return: `{ previewFilter, apply, cancel, hasChanges }`
 3. Integrate in `Editor.tsx`: import hook, pass to `ToolsPanel`, handle `activeTool` state
 4. Add UI in `ToolsPanel.tsx` with appropriate controls
@@ -238,13 +346,16 @@ ls -la dist/index.html dist/404.html
 
 - `/src/pages/Editor/Editor.tsx` - Main editor component
 - `/src/context/ImageEditorContext.tsx` - Global state
-- `/src/pages/Editor/hooks/useEditorHistory.ts` - Undo/redo snapshots
-- `/src/pages/Editor/hooks/useQuickFilters.ts` - Example tool implementation
-- `/src/pages/Editor/hooks/useZoomPan.ts` - Zoom/pan with touch gestures
+- `/src/pages/Editor/hooks/state/useEditorHistory.ts` - Undo/redo snapshots
+- `/src/pages/Editor/hooks/tools/useQuickFilters.ts` - Example tool implementation
+- `/src/pages/Editor/hooks/interaction/useZoomPan.ts` - Zoom/pan with touch gestures
 - `/src/utils/imageOptimization.ts` - Auto-optimization by device
-- `/src/pages/Editor/components/ToolsPanel/` - Modular tool components (14 files)
+- `/src/pages/Editor/components/desktop/ToolsPanel/` - Desktop tool components
+- `/src/pages/Editor/components/mobile/ToolsPanel/` - Mobile tool components
 - `/public/sw.js` - Service Worker for offline functionality
 - `/public/manifest.json` - PWA manifest
 - `package.json` - Build script with 404.html copy
 - `.github/workflows/deploy.yml` - CI/CD pipeline
+- `ARCHITECTURE.md` - Complete architecture guide
+- `DOCUMENTACION_HOOKS.md` - Hooks reference with JSDoc
 - `TESTING.md` - Comprehensive testing guide (100+ checkpoints)
