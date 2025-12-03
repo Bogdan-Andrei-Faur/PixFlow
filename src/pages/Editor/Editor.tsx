@@ -5,35 +5,45 @@ import { useImageEditor } from "../../context/useImageEditor";
 import { useNavigate } from "react-router-dom";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
-import cropStyles from "./components/ReactCropContainer.module.css";
-import ZoomControls from "./components/ZoomControls";
-import ZoomIndicator from "./components/ZoomIndicator";
-import TopBar from "./components/TopBar";
-import MobileTopBar from "./components/MobileTopBar";
-import MenuDrawer from "./components/MenuDrawer";
-import BottomSheet from "./components/BottomSheet";
-import ToolsPanel from "./components/ToolsPanel";
+import cropStyles from "./components/shared/ReactCrop/ReactCropContainer.module.css";
+import { IconUpload, IconHome } from "@tabler/icons-react";
+
+// Hooks
 import {
+  useZoomPan,
+  usePanDrag,
+  useKeyboardShortcuts,
+  useEditorHistory,
+  useImageExport,
+  useCropTool,
+  useResizeTool,
+  useTransformTool,
+  useAdjustmentsTool,
+  useQuickFilters,
+} from "./hooks";
+
+// Components
+import {
+  ZoomControls,
+  ZoomIndicator,
+  ToolsPanel,
+  TopBar,
+  MobileTopBar,
+  MenuDrawer,
+  BottomSheet,
+  ExportModal,
   MobileCropControls,
   MobileResizeControls,
   MobileTransformControls,
   MobileAdjustmentsControls,
   MobileFilterControls,
-} from "./components/MobileToolControls";
-import type { Tool } from "./components/ToolsPanel/types";
-import ExportModal from "./components/ExportModal";
+} from "./components";
+
+// Types
+import type { Tool } from "./components/desktop/ToolsPanel/types";
+
+// Utils
 import { clamp } from "./utils/number";
-import { useZoomPan } from "./hooks/useZoomPan";
-import { useEditorHistory } from "./hooks/useEditorHistory";
-import { useCropTool } from "./hooks/useCropTool";
-import { usePanDrag } from "./hooks/usePanDrag";
-import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
-import { useImageExport } from "./hooks/useImageExport";
-import { useResizeTool } from "./hooks/useResizeTool";
-import { useTransformTool } from "./hooks/useTransformTool";
-import { useAdjustmentsTool } from "./hooks/useAdjustmentsTool";
-import { useQuickFilters } from "./hooks/useQuickFilters";
-import { IconUpload, IconHome } from "@tabler/icons-react";
 
 const Editor: React.FC = () => {
   const { t } = useTranslation("editor");
@@ -525,12 +535,18 @@ const Editor: React.FC = () => {
                 panDrag.isDragging ? styles.dragging : ""
               }`}
               ref={viewportRef}
-              onPointerDown={activeTool !== "crop" ? panDrag.startDrag : undefined}
+              onPointerDown={
+                activeTool !== "crop" ? panDrag.startDrag : undefined
+              }
               onPointerMove={activeTool !== "crop" ? panDrag.onDrag : undefined}
               onPointerUp={activeTool !== "crop" ? panDrag.endDrag : undefined}
-              onPointerLeave={activeTool !== "crop" ? panDrag.endDrag : undefined}
+              onPointerLeave={
+                activeTool !== "crop" ? panDrag.endDrag : undefined
+              }
               onWheel={activeTool !== "crop" ? handleWheel : undefined}
-              onTouchStart={activeTool !== "crop" ? handleTouchStart : undefined}
+              onTouchStart={
+                activeTool !== "crop" ? handleTouchStart : undefined
+              }
               onTouchMove={activeTool !== "crop" ? handleTouchMove : undefined}
               onTouchEnd={activeTool !== "crop" ? handleTouchEnd : undefined}
             >
@@ -611,7 +627,9 @@ const Editor: React.FC = () => {
               )}
 
               {/* Zoom Indicator - Solo móvil */}
-              {isMobile && <ZoomIndicator zoom={zoom} visible={showZoomIndicator} />}
+              {isMobile && (
+                <ZoomIndicator zoom={zoom} visible={showZoomIndicator} />
+              )}
             </div>
           )}
         </div>
@@ -687,7 +705,9 @@ const Editor: React.FC = () => {
             <MobileFilterControls
               activeFilter={quickFilters.activeFilter}
               onSelectFilter={(filter: string) =>
-                quickFilters.selectFilter(filter as "none" | "grayscale" | "sepia" | "invert")
+                quickFilters.selectFilter(
+                  filter as "none" | "grayscale" | "sepia" | "invert"
+                )
               }
               onApply={async () => {
                 await quickFilters.applyFilter();

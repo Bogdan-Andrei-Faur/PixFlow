@@ -1,6 +1,6 @@
 # PixFlow - Editor de Imágenes Online
 
-![PixFlow](public/photo-dark.svg)
+![PixFlow](public/icons/favicon.svg)
 
 ## Editor de imágenes web ligero y completo, construido con React 19 + TypeScript + Vite
 
@@ -143,6 +143,8 @@ El editor estará disponible en `http://localhost:5173`
 
 ## 🏗️ Arquitectura
 
+**📚 Documentación completa**: Ver [ARCHITECTURE.md](./ARCHITECTURE.md) y [DOCUMENTACION_HOOKS.md](./DOCUMENTACION_HOOKS.md)
+
 ### Patrón de Herramientas: Preview → Apply → Undo
 
 Todas las herramientas de edición siguen este flujo:
@@ -165,27 +167,31 @@ history.saveSnapshot(); // Antes de aplicar
 history.undo(); // Restaura estado anterior
 ```
 
-### Estructura de Carpetas
+### Estructura de Carpetas (Reorganizada v2.2.0)
 
 ```text
 src/
 ├── pages/
-│   ├── Home/              # Página de carga de imagen
-│   ├── Editor/            # Editor principal
-│   │   ├── hooks/         # Custom hooks de herramientas
-│   │   │   ├── useCropTool.ts
-│   │   │   ├── useResizeTool.ts
-│   │   │   ├── useTransformTool.ts
-│   │   │   ├── useAdjustmentsTool.ts
-│   │   │   ├── useQuickFilters.ts
-│   │   │   ├── useEditorHistory.ts  # Undo/Redo
-│   │   │   └── useZoomPan.ts
-│   │   └── components/    # UI del editor
-│   └── NotFound/          # Página 404
+│   ├── Home/                    # Página de carga de imagen
+│   ├── Editor/                  # Editor principal
+│   │   ├── components/          # Componentes UI organizados
+│   │   │   ├── mobile/          # MobileTopBar, MenuDrawer, BottomSheet, ZoomIndicator, MobileToolControls, ToolsPanel
+│   │   │   ├── desktop/         # TopBar, ZoomControls, ToolsPanel
+│   │   │   ├── shared/          # ExportModal, ReactCrop
+│   │   │   └── index.ts         # Barrel export
+│   │   ├── hooks/               # Custom hooks organizados
+│   │   │   ├── tools/           # useCropTool, useResizeTool, useTransformTool, useAdjustmentsTool, useQuickFilters
+│   │   │   ├── interaction/     # useZoomPan, usePanDrag, useKeyboardShortcuts
+│   │   │   ├── state/           # useEditorHistory, useImageExport
+│   │   │   └── index.ts         # Barrel export
+│   │   └── utils/               # Utilidades (number.ts)
+│   └── NotFound/                # Página 404
 ├── context/
-│   └── ImageEditorContext.tsx  # Estado global
+│   └── ImageEditorContext.tsx   # Estado global
 └── components/
-    └── Alert/             # Componente de alertas
+    └── Alert/                   # Componente de alertas
+
+**Nota**: Todos los hooks están completamente documentados con JSDoc (ver DOCUMENTACION_HOOKS.md)
 ```
 
 ### Gestión de Estado
@@ -237,7 +243,14 @@ Las contribuciones son bienvenidas. Para cambios importantes:
 4. Push a la rama (`git push origin feature/nueva-herramienta`)
 5. Abre un Pull Request
 
-Consulta `.github/copilot-instructions.md` para patrones de código del proyecto.
+**Documentación para desarrolladores**:
+
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - Arquitectura completa, patrones de diseño, guías paso a paso
+- [DOCUMENTACION_HOOKS.md](./DOCUMENTACION_HOOKS.md) - Referencia rápida de todos los hooks con JSDoc
+- [.github/copilot-instructions.md](./.github/copilot-instructions.md) - Patrones de código del proyecto
+- [TESTING.md](./TESTING.md) - Guía de testing (100+ checkpoints)
+
+Todos los hooks están documentados con JSDoc completo (descripción, parámetros, retorno, ejemplos).
 
 ## 📄 Licencia
 
