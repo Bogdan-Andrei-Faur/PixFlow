@@ -1,15 +1,53 @@
 {
-  "title": "PixFlow",
-  "upload": {
-    "dragDrop": "Drag an image here",
-    "clickSelect": "or click to select (max {{maxSize}}MB)"
+  "hero": {
+    "title": "Edit Photos in Your Browser",
+    "titleAccent": "No Installations",
+    "subtitle": "Professional image editor, 100% free and private. Works offline on any device.",
+    "cta": "Open Free Editor"
   },
-  "preview": {
-    "cancel": "Cancel",
-    "edit": "Edit"
+  "features": {
+    "title": "Professional Tools",
+    "crop": {
+      "title": "Crop",
+      "description": "Select and crop specific areas with pixel-perfect precision"
+    },
+    "resize": {
+      "title": "Resize",
+      "description": "Change dimensions while maintaining aspect ratio"
+    },
+    "transform": {
+      "title": "Rotate & Flip",
+      "description": "90°, 180° rotation and horizontal/vertical mirroring"
+    },
+    "adjustments": {
+      "title": "Adjustments",
+      "description": "Brightness, contrast and saturation with real-time preview"
+    },
+    "filters": {
+      "title": "Filters",
+      "description": "Grayscale, sepia and color inversion"
+    },
+    "export": {
+      "title": "Export",
+      "description": "Download as PNG, JPEG or WebP with adjustable quality"
+    }
   },
-  "errors": {
-    "invalidType": "Only image files are allowed (PNG, JPG, etc.)",
-    "sizeExceeded": "File size exceeds the limit of {{maxSize}} MB."
+  "highlights": {
+    "pwa": {
+      "title": "Works on Any Device",
+      "description": "Installable as a native app on mobile, tablet and desktop. Works offline thanks to PWA."
+    },
+    "privacy": {
+      "title": "100% Private & Secure",
+      "description": "Your photos never leave your device. All processing is local, no servers."
+    }
+  },
+  "finalCta": {
+    "title": "Start Editing Now",
+    "button": "Open Editor"
+  },
+  "footer": {
+    "about": "About",
+    "privacy": "Privacy"
   }
 }

@@ -1,0 +1,49 @@
+{
+  "backToHome": "Volver al inicio",
+  "title": "Política de Privacidad",
+  "lastUpdated": "Última actualización",
+  "imageProcessing": {
+    "title": "Procesamiento de Imágenes",
+    "description": "PixFlow es un editor de imágenes que funciona 100% en tu navegador. Esto significa:",
+    "points": [
+      "Todas las imágenes se procesan localmente en tu dispositivo",
+      "Ninguna imagen se sube a servidores externos",
+      "Tus archivos nunca abandonan tu dispositivo"
+    ]
+  },
+  "dataStorage": {
+    "title": "Almacenamiento de Datos",
+    "description": "PixFlow no almacena ninguna información personal ni imágenes en servidores. Toda la información se procesa en memoria temporal del navegador y se borra al cerrar la aplicación."
+  },
+  "analytics": {
+    "title": "Analíticas Web",
+    "description": "Utilizamos Google Analytics para entender cómo se usa la aplicación y mejorarla. Los datos recopilados son completamente anónimos:",
+    "points": [
+      "Páginas visitadas y tiempo de sesión",
+      "Herramientas utilizadas (crop, resize, etc.)",
+      "Tipo de dispositivo y navegador"
+    ],
+    "policy": "Para más información sobre cómo Google procesa estos datos, consulta la",
+    "policyLink": "Política de Privacidad de Google"
+  },
+  "cookies": {
+    "title": "Cookies",
+    "description": "Utilizamos cookies esenciales para el funcionamiento de la aplicación (preferencias de idioma, tema) y cookies de terceros para analytics y publicidad."
+  },
+  "thirdParty": {
+    "title": "Servicios de Terceros",
+    "description": "PixFlow utiliza los siguientes servicios de terceros:",
+    "points": [
+      "Para recopilar datos de uso anónimos",
+      "Para mostrar anuncios discretos que ayudan a mantener el servicio gratuito"
+    ]
+  },
+  "changes": {
+    "title": "Cambios en la Política",
+    "description": "Podemos actualizar esta política ocasionalmente. Te notificaremos de cambios significativos mediante un aviso en la aplicación."
+  },
+  "contact": {
+    "title": "Contacto",
+    "description": "Si tienes preguntas sobre esta política de privacidad, puedes abrir un issue en"
+  }
+}

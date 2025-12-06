@@ -1,15 +1,53 @@
 {
-  "title": "PixFlow",
-  "upload": {
-    "dragDrop": "Arrastra una imagen aquí",
-    "clickSelect": "o haz clic para seleccionar (máx. {{maxSize}}MB)"
+  "hero": {
+    "title": "Edita Fotos en Tu Navegador",
+    "titleAccent": "Sin Instalaciones",
+    "subtitle": "Editor de imágenes profesional, 100% gratis y privado. Funciona offline en cualquier dispositivo.",
+    "cta": "Abrir Editor Gratis"
   },
-  "preview": {
-    "cancel": "Cancelar",
-    "edit": "Editar"
+  "features": {
+    "title": "Herramientas Profesionales",
+    "crop": {
+      "title": "Recortar",
+      "description": "Selecciona y recorta áreas específicas con precisión pixel-perfect"
+    },
+    "resize": {
+      "title": "Redimensionar",
+      "description": "Cambia dimensiones manteniendo proporción de aspecto"
+    },
+    "transform": {
+      "title": "Rotar y Voltear",
+      "description": "Rotación 90°, 180° y espejado horizontal/vertical"
+    },
+    "adjustments": {
+      "title": "Ajustes",
+      "description": "Brillo, contraste y saturación con preview en tiempo real"
+    },
+    "filters": {
+      "title": "Filtros",
+      "description": "Escala de grises, sepia e inversión de colores"
+    },
+    "export": {
+      "title": "Exportar",
+      "description": "Descarga en PNG, JPEG o WebP con calidad ajustable"
+    }
   },
-  "errors": {
-    "invalidType": "Solo se permiten archivos de imagen (PNG, JPG, etc.)",
-    "sizeExceeded": "El tamaño del archivo excede el límite de {{maxSize}} MB."
+  "highlights": {
+    "pwa": {
+      "title": "Funciona en Cualquier Dispositivo",
+      "description": "Instalable como app nativa en móvil, tablet y desktop. Funciona sin conexión gracias a PWA."
+    },
+    "privacy": {
+      "title": "100% Privado y Seguro",
+      "description": "Tus fotos nunca salen de tu dispositivo. Todo el procesamiento es local, sin servidores."
+    }
+  },
+  "finalCta": {
+    "title": "Empieza a Editar Ahora",
+    "button": "Abrir Editor"
+  },
+  "footer": {
+    "about": "Acerca de",
+    "privacy": "Privacidad"
   }
 }

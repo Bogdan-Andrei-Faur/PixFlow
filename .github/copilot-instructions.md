@@ -5,9 +5,9 @@
 PixFlow is a **Progressive Web App (PWA)** image editor built with React 19 + TypeScript + Vite. It uses destructive editing with Canvas API, client-side routing with React Router, and is optimized for mobile devices with touch gestures and automatic image optimization.
 
 **Live URL**: <https://pixflow.andreifaur.dev>  
-**Routes**: `/` (home), `/editor` (editor)  
+**Routes**: `/` (landing), `/editor` (editor), `/privacy` (privacy policy), `/about` (about page)  
 **Type**: PWA - Installable, offline-capable, mobile-optimized  
-**Version**: v2.2.0 (Architecture reorganization with desktop/mobile separation)
+**Version**: v2.3.0 (Landing page + Analytics + AdSense preparation)
 
 ## 📚 Documentation Files (READ THESE FIRST)
 
@@ -16,11 +16,27 @@ Before making changes, consult these comprehensive guides:
 - **[ARCHITECTURE.md](../ARCHITECTURE.md)** - Complete project architecture, design patterns, step-by-step guides
 - **[DOCUMENTACION_HOOKS.md](../DOCUMENTACION_HOOKS.md)** - Quick reference for all 10 hooks with JSDoc
 - **[TESTING.md](../TESTING.md)** - Testing guide with 100+ checkpoints
-- **[CHANGELOG.md](../CHANGELOG.md)** - Version history with v2.2.0 refactoring details
+- **[CHANGELOG.md](../CHANGELOG.md)** - Version history with v2.3.0 landing page details
 
 All hooks have **complete JSDoc documentation** in their source files with `@param`, `@returns`, and `@example` sections.
 
-## Architecture v2.2.0 - Organized Structure
+## Architecture v2.3.0 - Marketing Ready
+
+### New Pages (Landing & Info)
+
+```text
+src/pages/
+├── Home/                  # Landing page (NOT image uploader anymore)
+│   ├── Home.tsx           # Hero + features + highlights + CTA
+│   └── Home.module.css    # Modern gradient design
+├── Privacy/               # Privacy policy (AdSense requirement)
+│   ├── Privacy.tsx        # Image processing, analytics, cookies
+│   └── Privacy.module.css
+├── About/                 # About page
+│   ├── About.tsx          # What, why, tech stack, author
+│   └── About.module.css
+└── Editor/                # Image editor (unchanged)
+```
 
 ### Component Organization (Desktop/Mobile/Shared Separation)
 
@@ -138,9 +154,15 @@ canvas.toBlob((blob) => {
 // Editor.tsx orchestrates both
 const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-{isMobile ? <MobileTopBar /> : <TopBar />}
-{isMobile ? <BottomSheet /> : <ToolsPanel />}
-{isMobile && <ZoomIndicator />}
+{
+  isMobile ? <MobileTopBar /> : <TopBar />;
+}
+{
+  isMobile ? <BottomSheet /> : <ToolsPanel />;
+}
+{
+  isMobile && <ZoomIndicator />;
+}
 ```
 
 **Mobile Components**:

@@ -1,9 +1,9 @@
 {
   "title": "PixFlow Editor",
   "noImage": {
-    "title": "No image loaded",
-    "description": "The image was lost when the page was refreshed.\nPlease load an image to continue editing.",
-    "button": "Load image"
+    "title": "Upload an image to get started",
+    "description": "Select a photo from your device and start editing it with professional tools.",
+    "button": "Select Image"
   },
   "tools": {
     "title": "Tools",

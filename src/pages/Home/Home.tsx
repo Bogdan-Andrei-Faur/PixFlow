@@ -1,95 +1,128 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate, Link } from "react-router-dom";
 import styles from "./Home.module.css";
-import Alert from "../../components/Alert/Alert";
-import ImageUploader from "./components/ImageUploader";
-import ImagePreview from "./components/ImagePreview";
-import { useImageEditor } from "../../context/useImageEditor";
-import { useNavigate } from "react-router-dom";
-
-const MAX_SIZE_MB = 50;
+import AdBanner from "../../components/AdBanner/AdBanner";
+import {
+  IconScissors,
+  IconResize,
+  IconRotate,
+  IconAdjustments,
+  IconPalette,
+  IconDeviceMobile,
+  IconLock,
+  IconDownload,
+  IconBrandGithub,
+} from "@tabler/icons-react";
 
 const Home = () => {
   const { t } = useTranslation("home");
-  const [imageFile, setImageFile] = React.useState<File | null>(null);
-  const [previewURL, setPreviewURL] = React.useState<string | null>(null);
-  const [error, setError] = React.useState<string | null>(null);
-  const errorResetTimer = React.useRef<number | null>(null);
-  const { setSourceFile } = useImageEditor();
   const navigate = useNavigate();
 
-  const handleImageSelect = (file: File) => {
-    if (previewURL) {
-      URL.revokeObjectURL(previewURL);
-    }
-    const newURL = URL.createObjectURL(file);
-    setPreviewURL(newURL);
-    setImageFile(file);
-    setError(null);
-  };
+  const features = [
+    { icon: IconScissors, key: "crop" },
+    { icon: IconResize, key: "resize" },
+    { icon: IconRotate, key: "transform" },
+    { icon: IconAdjustments, key: "adjustments" },
+    { icon: IconPalette, key: "filters" },
+    { icon: IconDownload, key: "export" },
+  ];
 
-  const handleError = (message: string) => {
-    // Si el mismo error se repite, forzamos re-montaje de la alerta
-    if (errorResetTimer.current) {
-      window.clearTimeout(errorResetTimer.current);
-      errorResetTimer.current = null;
-    }
-    setError(null);
-    errorResetTimer.current = window.setTimeout(() => {
-      setError(message);
-      errorResetTimer.current = null;
-    }, 0);
-  };
-
-  const handleCancel = () => {
-    if (previewURL) {
-      URL.revokeObjectURL(previewURL);
-    }
-    setImageFile(null);
-    setPreviewURL(null);
-    setError(null);
-  };
-
-  const handleEdit = () => {
-    if (imageFile) {
-      setSourceFile(imageFile); // Llevar archivo al contexto
-      navigate("/editor");
-    }
-  };
-
-  // Limpiar URL cuando el componente se desmonte o cambie la imagen
-  React.useEffect(() => {
-    return () => {
-      if (previewURL) {
-        URL.revokeObjectURL(previewURL);
-      }
-      if (errorResetTimer.current) {
-        window.clearTimeout(errorResetTimer.current);
-      }
-    };
-  }, [previewURL]);
+  const highlights = [
+    { icon: IconDeviceMobile, key: "pwa" },
+    { icon: IconLock, key: "privacy" },
+  ];
 
   return (
-    <div className={`${styles.container} ${styles.background}`}>
-      <div className={styles.content}>
-        <h1 className={styles.title}>{t("title")}</h1>
+    <div className={styles.container}>
+      {/* Hero Section */}
+      <section className={styles.hero}>
+        <div className={styles.heroContent}>
+          <h1 className={styles.heroTitle}>
+            {t("hero.title")}
+            <span className={styles.heroAccent}>{t("hero.titleAccent")}</span>
+          </h1>
+          <p className={styles.heroSubtitle}>{t("hero.subtitle")}</p>
+          <button
+            className={styles.ctaButton}
+            onClick={() => navigate("/editor")}
+          >
+            {t("hero.cta")}
+          </button>
+        </div>
+      </section>
 
-        {previewURL && !error ? (
-          <ImagePreview
-            previewURL={previewURL}
-            onCancel={handleCancel}
-            onEdit={handleEdit}
-          />
-        ) : (
-          <ImageUploader
-            onImageSelect={handleImageSelect}
-            maxSizeMB={MAX_SIZE_MB}
-            onError={handleError}
-          />
-        )}
+      {/* Features Grid */}
+      <section className={styles.features}>
+        <h2 className={styles.sectionTitle}>{t("features.title")}</h2>
+        <div className={styles.featuresGrid}>
+          {features.map(({ icon: Icon, key }) => (
+            <div key={key} className={styles.featureCard}>
+              <Icon className={styles.featureIcon} size={32} />
+              <h3 className={styles.featureTitle}>
+                {t(`features.${key}.title`)}
+              </h3>
+              <p className={styles.featureDescription}>
+                {t(`features.${key}.description`)}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-        {error && <Alert message={error} onClose={() => setError(null)} />}
-      </div>
+      {/* Highlights */}
+      <section className={styles.highlights}>
+        {highlights.map(({ icon: Icon, key }) => (
+          <div key={key} className={styles.highlightCard}>
+            <Icon className={styles.highlightIcon} size={28} />
+            <div>
+              <h3 className={styles.highlightTitle}>
+                {t(`highlights.${key}.title`)}
+              </h3>
+              <p className={styles.highlightDescription}>
+                {t(`highlights.${key}.description`)}
+              </p>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      {/* Final CTA */}
+      <section className={styles.finalCta}>
+        <h2 className={styles.finalCtaTitle}>{t("finalCta.title")}</h2>
+        <button
+          className={styles.ctaButton}
+          onClick={() => navigate("/editor")}
+        >
+          {t("finalCta.button")}
+        </button>
+      </section>
+
+      {/* Ad Banner (solo en landing) */}
+      <AdBanner />
+
+      {/* Footer */}
+      <footer className={styles.footer}>
+        <div className={styles.footerLinks}>
+          <Link to="/about" className={styles.footerLink}>
+            {t("footer.about")}
+          </Link>
+          <Link to="/privacy" className={styles.footerLink}>
+            {t("footer.privacy")}
+          </Link>
+          <a
+            href="https://github.com/Bogdan-Andrei-Faur/PixFlow"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.footerLink}
+          >
+            <IconBrandGithub size={18} />
+            GitHub
+          </a>
+        </div>
+        <p className={styles.footerCopyright}>
+          © 2025 PixFlow by Bogdan Andrei Faur
+        </p>
+      </footer>
     </div>
   );
 };

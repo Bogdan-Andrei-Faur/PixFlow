@@ -1,0 +1,49 @@
+{
+  "backToHome": "Back to home",
+  "title": "Privacy Policy",
+  "lastUpdated": "Last updated",
+  "imageProcessing": {
+    "title": "Image Processing",
+    "description": "PixFlow is an image editor that works 100% in your browser. This means:",
+    "points": [
+      "All images are processed locally on your device",
+      "No images are uploaded to external servers",
+      "Your files never leave your device"
+    ]
+  },
+  "dataStorage": {
+    "title": "Data Storage",
+    "description": "PixFlow does not store any personal information or images on servers. All information is processed in the browser's temporary memory and is deleted when you close the application."
+  },
+  "analytics": {
+    "title": "Web Analytics",
+    "description": "We use Google Analytics to understand how the application is used and improve it. The collected data is completely anonymous:",
+    "points": [
+      "Pages visited and session time",
+      "Tools used (crop, resize, etc.)",
+      "Device type and browser"
+    ],
+    "policy": "For more information on how Google processes this data, see the",
+    "policyLink": "Google Privacy Policy"
+  },
+  "cookies": {
+    "title": "Cookies",
+    "description": "We use essential cookies for application functionality (language preferences, theme) and third-party cookies for analytics and advertising."
+  },
+  "thirdParty": {
+    "title": "Third-Party Services",
+    "description": "PixFlow uses the following third-party services:",
+    "points": [
+      "To collect anonymous usage data",
+      "To display discreet ads that help keep the service free"
+    ]
+  },
+  "changes": {
+    "title": "Policy Changes",
+    "description": "We may update this policy occasionally. We will notify you of significant changes through a notice in the application."
+  },
+  "contact": {
+    "title": "Contact",
+    "description": "If you have questions about this privacy policy, you can open an issue on"
+  }
+}

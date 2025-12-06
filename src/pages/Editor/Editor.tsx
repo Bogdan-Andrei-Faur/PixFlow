@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import cropStyles from "./components/shared/ReactCrop/ReactCropContainer.module.css";
-import { IconUpload, IconHome } from "@tabler/icons-react";
+import { IconUpload } from "@tabler/icons-react";
 
 // Hooks
 import {
@@ -514,7 +514,7 @@ const Editor: React.FC = () => {
                 </div>
                 <button
                   className={`${styles.button} ${styles.primary}`}
-                  onClick={() => navigate("/")}
+                  onClick={() => fileInputRef.current?.click()}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -523,7 +523,7 @@ const Editor: React.FC = () => {
                     fontSize: "1rem",
                   }}
                 >
-                  <IconHome size={20} />
+                  <IconUpload size={20} />
                   {t("noImage.button")}
                 </button>
               </div>

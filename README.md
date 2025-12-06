@@ -10,6 +10,19 @@
 
 ## ✨ Características
 
+### 🌐 Landing Page Profesional (v2.3.0)
+
+- **Hero Section** - CTA destacado con gradientes modernos
+- **Features Grid** - 6 herramientas principales con iconos y descripciones
+- **Highlights** - PWA y privacidad con diseño visual
+- **Footer** - Enlaces a About, Privacy y GitHub
+- **SEO Optimizado** - Meta tags para búsqueda orgánica
+- **Rutas**:
+  - `/` - Landing page principal
+  - `/editor` - Editor de imágenes
+  - `/privacy` - Política de privacidad (requisito AdSense)
+  - `/about` - Información del proyecto
+
 ### 📱 Progressive Web App (PWA)
 
 - **💾 Instalable** - Añade a pantalla de inicio en iOS/Android
@@ -40,6 +53,8 @@
 - **💾 Exportación** - PNG, JPEG, WebP con ajuste de calidad
 - **📱 Responsive** - Diseño adaptable con drawer móvil
 - **🌙 Tema oscuro/claro** - Cambio visual con patrón de transparencia
+- **📊 Analytics** - Google Analytics 4 integrado (configuración pendiente)
+- **💰 Monetización** - Google AdSense preparado (solo landing page)
 
 ### Atajos de Teclado (Desktop)
 

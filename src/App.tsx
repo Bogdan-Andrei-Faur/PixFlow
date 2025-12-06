@@ -3,6 +3,8 @@ import "./App.css";
 
 import Home from "./pages/Home/Home";
 import Editor from "./pages/Editor/Editor";
+import Privacy from "./pages/Privacy/Privacy";
+import About from "./pages/About/About";
 import NotFound from "./pages/NotFound/NotFound";
 import { ImageEditorProvider } from "./context/ImageEditorContext";
 
@@ -23,6 +25,8 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/editor" element={<Editor />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/about" element={<About />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>

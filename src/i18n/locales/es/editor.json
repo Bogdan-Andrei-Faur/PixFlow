@@ -1,9 +1,9 @@
 {
   "title": "Editor PixFlow",
   "noImage": {
-    "title": "No hay imagen cargada",
-    "description": "La imagen se perdió al refrescar la página.\nVuelve a cargar una imagen para continuar editando.",
-    "button": "Volver a cargar imagen"
+    "title": "Sube una imagen para empezar",
+    "description": "Selecciona una foto de tu dispositivo y comienza a editarla con herramientas profesionales.",
+    "button": "Seleccionar Imagen"
   },
   "tools": {
     "title": "Herramientas",

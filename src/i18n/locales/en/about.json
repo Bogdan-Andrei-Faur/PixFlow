@@ -1,0 +1,35 @@
+{
+  "backToHome": "Back to home",
+  "title": "About PixFlow",
+  "what": {
+    "title": "What is PixFlow?",
+    "description": "PixFlow is a professional and free web image editor that works entirely in your browser. No installation, account or registration required. All tools are available offline as a Progressive Web App (PWA)."
+  },
+  "why": {
+    "title": "Why PixFlow?",
+    "points": [
+      "100% Private - Your photos never leave your device",
+      "No Installation - Works directly in the browser",
+      "Completely Free - No subscriptions or hidden fees",
+      "Offline First - Install as an app and use without connection"
+    ]
+  },
+  "tech": {
+    "title": "Technologies Used"
+  },
+  "author": {
+    "title": "Author",
+    "description": "PixFlow was created by Bogdan Andrei Faur as an open source project to demonstrate the capabilities of modern web technologies.",
+    "website": "Website"
+  },
+  "openSource": {
+    "title": "Open Source",
+    "description": "PixFlow is 100% open source under MIT license. Contributions, suggestions and bug reports are welcome.",
+    "button": "View Repository"
+  },
+  "version": {
+    "title": "Version",
+    "current": "Current version",
+    "updated": "Last updated"
+  }
+}

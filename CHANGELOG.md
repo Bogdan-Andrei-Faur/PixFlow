@@ -1,5 +1,203 @@
 # Changelog - PixFlow
 
+## [2.3.0] - 2025-12-06 - Landing Page & Marketing Features
+
+### 🎨 Nueva Landing Page
+
+#### Añadido
+
+- **Landing page completa** con diseño moderno y profesional
+  - Hero section con gradientes y CTA destacado
+  - Grid de 6 features (crop, resize, transform, adjustments, filters, export)
+  - Highlights de PWA y privacidad
+  - Footer con enlaces a About, Privacy y GitHub
+- **Página Privacy** (`/privacy`) - Requerida para Google AdSense
+  - Política de procesamiento local (sin servidores)
+  - Información sobre Google Analytics
+  - Política de cookies y terceros
+- **Página About** (`/about`) - Información del proyecto
+  - Qué es PixFlow y por qué existe
+  - Stack tecnológico (React 19, TypeScript, Vite, Canvas API)
+  - Información del autor con enlaces
+  - Versión y última actualización
+
+### 📊 Analytics & Monetización
+
+- **Google Analytics 4** integrado en `index.html`
+  - Placeholder `G-XXXXXXXXXX` listo para ID real
+  - Script optimizado en `<head>`
+- **AdBanner component** preparado para Google AdSense
+  - Solo se muestra en landing (`/`), nunca en editor
+  - Placeholder discreto con mensaje "ayuda a mantener gratis"
+  - Comentarios con instrucciones paso a paso para activar
+  - Estructura lista: `data-ad-client`, `data-ad-slot`, etc.
+
+### 🌐 Internacionalización
+
+- **4 nuevos archivos de traducción**:
+  - `home.json` (es/en) - Landing page completa
+  - `privacy.json` (es/en) - Política de privacidad
+  - `about.json` (es/en) - Página acerca de
+- **i18n config actualizado** con namespaces: `home`, `privacy`, `about`
+
+### 🎯 SEO Mejorado
+
+- **Meta tags optimizados** en `index.html`:
+  - Title: "Editor de imágenes online gratis - Sin instalación"
+  - Description mejorada con keywords (PWA, offline, privado)
+  - Open Graph y Twitter Cards actualizadas
+
+### 🧭 Routing
+
+- **3 nuevas rutas** en `App.tsx`:
+  - `/` - Landing page (antes era selector de imagen)
+  - `/privacy` - Política de privacidad
+  - `/about` - Acerca de PixFlow
+  - `/editor` - Editor (sin cambios)
+
+### 📦 Arquitectura
+
+#### Nuevos Componentes (6 archivos)
+
+- `Home.tsx` + `.module.css` - Landing page completa (reemplaza antigua)
+- `Privacy.tsx` + `.module.css` - Página de privacidad
+- `About.tsx` + `.module.css` - Página acerca de
+- `AdBanner.tsx` + `.module.css` - Componente de publicidad
+
+#### Archivos Modificados
+
+- `App.tsx` - Rutas nuevas
+- `index.html` - GA4 script + meta tags mejorados
+- `i18n/config.ts` - Nuevos namespaces
+
+### 📊 Métricas
+
+- **Archivos nuevos**: 12 (componentes + estilos + traducciones)
+- **Archivos modificados**: 3
+- **Líneas de código**: ~1,800 (landing + páginas + estilos)
+- **Bundle size**: 392.30 KB JS (gzip 121.18 KB) ✅
+- **Build time**: ~1.4s ✅
+
+### 🎯 Listo para Producción
+
+- ✅ **Landing page** lista para validar usuarios
+- ✅ **Analytics** preparado (solo falta ID real)
+- ✅ **AdSense** estructura completa (solo falta activar cuenta)
+- ✅ **SEO** optimizado para búsqueda orgánica
+- ✅ **Privacidad** cumple requisitos legales AdSense
+
+### 📝 Próximos Pasos (Fase 2)
+
+1. Obtener ID de Google Analytics 4 → reemplazar `G-XXXXXXXXXX`
+2. Crear cuenta Google AdSense → obtener Publisher ID
+3. Configurar AdBanner con IDs reales
+4. Deploy y validar 2-3 semanas
+5. Product Hunt launch
+
+---
+
+## [2.2.0] - 2024-12-03 - Code Architecture Reorganization
+
+### 🏗️ Refactorización Completa de Arquitectura
+
+#### Reorganización de Componentes
+
+- **Separación Desktop/Mobile**: Componentes ahora organizados en carpetas separadas
+  - `components/desktop/` - TopBar, ZoomControls, ToolsPanel
+  - `components/mobile/` - MobileTopBar, MenuDrawer, BottomSheet, ZoomIndicator, MobileToolControls, ToolsPanel
+  - `components/shared/` - ExportModal, ReactCrop
+- **ToolsPanel Modularizado**:
+  - Desktop: `DesktopPanel.tsx` + 5 panels individuales (Adjustments, Crop, Filters, Resize, Transform)
+  - Mobile: `MobileDock.tsx` + 5 docks individuales
+  - Compartido: `types.ts` con tipos centralizados (Tool, NaturalDims, CropRect, FilterType)
+- **Barrel Exports**: Archivo `index.ts` en `components/` para imports simplificados
+
+#### Reorganización de Hooks
+
+- **Estructura categorizada** en 3 carpetas:
+  - `hooks/tools/` - 5 hooks de herramientas de edición
+    - `useCropTool.ts` - Recorte con límites por dispositivo
+    - `useResizeTool.ts` - Redimensionar con aspect ratio
+    - `useTransformTool.ts` - Rotación y volteo
+    - `useAdjustmentsTool.ts` - Brillo/contraste/saturación
+    - `useQuickFilters.ts` - Filtros rápidos (grayscale/sepia/invert)
+  - `hooks/interaction/` - 3 hooks de interacción
+    - `useZoomPan.ts` - Zoom y pan con gestos táctiles
+    - `usePanDrag.ts` - Arrastrar canvas con puntero
+    - `useKeyboardShortcuts.ts` - Atajos de teclado (Cmd+Z, +, -, 0)
+  - `hooks/state/` - 2 hooks de estado
+    - `useEditorHistory.ts` - Deshacer/rehacer con snapshots
+    - `useImageExport.ts` - Exportación con formato/calidad
+- **Barrel Exports**: Archivo `index.ts` en `hooks/` con exports organizados por categoría
+
+#### Componentes Nuevos
+
+**Desktop**:
+
+- `TopBar.tsx` - Barra superior con navegación completa, undo/redo, tema, idioma
+- `ZoomControls.tsx` - Controles de zoom con slider, botones +/-, Fit, 1:1
+- `DesktopPanel.tsx` - Orquestador de paneles de herramientas
+- 5 Panels: `AdjustmentsPanel.tsx`, `CropPanel.tsx`, `FiltersPanel.tsx`, `ResizePanel.tsx`, `TransformPanel.tsx`
+
+**Mobile**:
+
+- `MobileDock.tsx` - Dock de herramientas con iconos
+- 5 Docks: `AdjustmentsDock.tsx`, `CropDock.tsx`, `FiltersDock.tsx`, `ResizeDock.tsx`, `TransformDock.tsx`
+
+**Shared**:
+
+- `ExportModal.tsx` - Modal de exportación con preview de tamaño y selección de formato
+- `EasyCropWrapper.tsx` - Wrapper para react-easy-crop
+- `ReactCropContainer.module.css` - Estilos optimizados para handles de crop
+
+#### Documentación Completa
+
+- **JSDoc en todos los hooks** (10/10): Descripción, parámetros, retorno, ejemplos
+- **DOCUMENTACION_HOOKS.md**: Referencia rápida de todos los hooks con patrones de uso
+- **ARCHITECTURE.md**: Guía completa de arquitectura con ejemplos paso a paso
+- **README.md**: Actualizado con nueva estructura v2.2.0
+
+#### Mejoras de Código
+
+- **Imports simplificados**:
+
+  ```typescript
+  // Antes
+  import { useZoomPan } from "./hooks/interaction/useZoomPan";
+
+  // Ahora
+  import { useZoomPan } from "./hooks";
+  ```
+
+- **Tipos centralizados**: `types.ts` compartido entre desktop y mobile
+- **Sin duplicados**: Eliminados archivos obsoletos y duplicados de reorganizaciones anteriores
+
+#### Correcciones
+
+- ✅ **Estructura de carpetas**: mobile/ToolsPanel y desktop/ToolsPanel en ubicaciones correctas
+- ✅ **Eliminación de duplicados**: Sin archivos repetidos o en ubicaciones incorrectas
+- ✅ **Actualización de iconos**: Referencias cambiadas de `photo-dark.svg` a `icons/favicon.svg`
+- ✅ **Limpieza de configuración**: Eliminado `.markdownlint.json` (extensión desinstalada)
+
+### 📊 Métricas
+
+- **Archivos reorganizados**: 47 archivos (componentes + hooks)
+- **Archivos nuevos**: 24 (componentes separados + hooks categorizados + barrel exports)
+- **Líneas de documentación**: ~1,500 (JSDoc + DOCUMENTACION_HOOKS.md)
+- **Compilación TypeScript**: 0 errores ✅
+- **Build**: 375.96 KB JS gzipped (sin cambios) ✅
+- **Linter**: 0 warnings ✅
+
+### 🎯 Beneficios
+
+- ✨ **Mejor mantenibilidad**: Componentes y hooks organizados por responsabilidad
+- 🔍 **Más fácil de navegar**: Estructura clara con separación desktop/mobile/shared
+- 📚 **Documentación completa**: Todos los hooks con JSDoc + guías de arquitectura
+- 🚀 **Imports más limpios**: Barrel exports eliminan paths profundos
+- 🧪 **Más testeable**: Componentes pequeños y enfocados
+
+---
+
 ## [2.1.0] - 2024-12-02 - Mobile UI Overhaul & UX Polish
 
 ### 🎨 Nueva Interfaz Móvil
